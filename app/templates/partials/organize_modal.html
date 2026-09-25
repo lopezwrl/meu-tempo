@@ -1,0 +1,16 @@
+{% import "partials/icons.html" as icons %}
+<div class="modal-overlay" id="organizeModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>Sugestão de organização do dia</h2>
+      <button class="modal-close" id="organizeModalClose" aria-label="Fechar">{{ icons.icon('x', 14) }}</button>
+    </div>
+    <div id="organizeModalBody">
+      <p class="empty-hint">Calculando...</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-text" id="organizeCancelBtn">Cancelar</button>
+      <button type="button" class="btn btn-primary" id="organizeApplyBtn" style="display:none;">Aplicar sugestão</button>
+    </div>
+  </div>
+</div>

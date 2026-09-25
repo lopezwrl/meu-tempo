@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Minhas tarefas · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Organização</p>
+    <h1 class="page-title">Minhas tarefas</h1>
+  </div>
+  <button class="btn btn-primary" id="openNewTask">{{ icons.icon('plus') }} Nova tarefa</button>
+</header>
+
+<div class="filter-bar">
+  <a href="{{ url_for('tasks.tasks_page', status='todas') }}" class="chip {{ 'is-active' if status_filter == 'todas' }}">Todas</a>
+  <a href="{{ url_for('tasks.tasks_page', status='pendentes') }}" class="chip {{ 'is-active' if status_filter == 'pendentes' }}">Pendentes</a>
+  <a href="{{ url_for('tasks.tasks_page', status='concluidas') }}" class="chip {{ 'is-active' if status_filter == 'concluidas' }}">Concluídas</a>
+</div>
+
+<section class="task-list">
+  {% if tasks %}
+    {% for task in tasks %}
+    <article class="task-row priority-{{ task.priority }} {{ 'is-done' if task.status == 'concluida' }} {{ 'is-running' if task.is_running }}" data-task-id="{{ task.id }}" data-task-row="{{ task.id }}">
+      <button class="task-check {{ 'is-checked' if task.status == 'concluida' }}" data-task-id="{{ task.id }}" data-complete-toggle title="Concluir tarefa">{{ icons.icon('check', 13) }}</button>
+      <div class="task-row-body" data-open-task="{{ task.id }}">
+        <div class="task-row-top">
+          <span class="task-row-name">{{ task.name }}</span>
+          {% if task.status == 'em_andamento' %}<span class="badge badge-live">{{ icons.icon('clock', 11) }} Em andamento</span>
+          {% elif task.status == 'pausada' %}<span class="badge badge-warning">{{ icons.icon('pause', 11) }} Pausada</span>
+          {% elif task.is_overdue %}<span class="badge badge-danger">Atrasada</span>
+          {% elif task.is_due_soon %}<span class="badge badge-warning">Prazo próximo</span>
+          {% endif %}
+        </div>
+        <div class="task-row-meta">
+          {% if task.project %}<span>{{ icons.icon('folder', 12) }} {{ task.project.name }}</span>{% endif %}
+          {% if task.category %}<span>{{ icons.category_icon(task.category.icon) }} {{ task.category.name }}</span>{% endif %}
+          {% if task.date %}<span>{{ icons.icon('calendar', 12) }} {{ task.date.strftime('%d/%m') }}{% if task.time %} às {{ task.time }}{% endif %}</span>{% endif %}
+          {% if task.estimated_minutes %}<span>{{ icons.icon('target', 12) }} {{ task.estimated_minutes|hm }}</span>{% endif %}
+          {% if task.worked_minutes %}<span>{{ icons.icon('clock', 12) }} {{ task.worked_minutes|hm }} trabalhado{{ 's' if task.session_count > 1 }}</span>{% endif %}
+          {% if task.subtasks_total %}<span class="sub-chip {{ 'is-complete' if task.subtasks_done == task.subtasks_total }}">{{ icons.icon('check-circle', 12) }} {{ task.subtasks_done }}/{{ task.subtasks_total }}</span>{% endif %}
+          {% if task.notes %}<span>{{ icons.icon('file-text', 12) }} {{ task.notes|length }}</span>{% endif %}
+          {% for tag in task.tag_list %}<span class="tag">#{{ tag }}</span>{% endfor %}
+        </div>
+      </div>
+      <div class="task-row-timer">
+        {% if task.status == 'concluida' %}
+          <span class="timer-done-label">{{ task.worked_minutes|hm }}</span>
+        {% else %}
+          {% if task.is_running %}
+            <span class="live-clock" data-live-clock="{{ task.id }}">00:00:00</span>
+            <button class="btn btn-ghost btn-small" data-timer-pause="{{ task.id }}">{{ icons.icon('pause', 13) }}</button>
+            <button class="btn btn-primary btn-small" data-timer-finish="{{ task.id }}" data-task-name="{{ task.name }}" data-estimated-minutes="{{ task.estimated_minutes or '' }}">{{ icons.icon('stop', 13) }}</button>
+          {% else %}
+            <button class="btn btn-ghost btn-small" data-timer-start="{{ task.id }}" title="Iniciar cronômetro">{{ icons.icon('play', 13) }}</button>
+          {% endif %}
+          <a class="link" href="{{ url_for('timer.focus_page', task_id=task.id) }}" title="Modo foco">{{ icons.icon('target', 15) }}</a>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  {% else %}
+  <div class="empty-state">
+    <p>Nenhuma tarefa por aqui ainda.</p>
+    <button class="btn btn-ghost" id="emptyStateNewTask">Criar a primeira tarefa</button>
+  </div>
+  {% endif %}
+</section>
+
+{% include "partials/task_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+{% endblock %}

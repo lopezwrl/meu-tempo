@@ -1,0 +1,36 @@
+{% import "partials/icons.html" as icons %}
+<div class="modal-overlay" id="projectModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>Novo projeto</h2>
+      <button class="modal-close" id="projectModalClose" aria-label="Fechar">{{ icons.icon('x', 14) }}</button>
+    </div>
+    <form id="projectForm" class="task-form">
+      <label class="field">
+        <span>Nome do projeto</span>
+        <input type="text" id="projectName" placeholder="Ex.: Implantação do novo sistema" required>
+      </label>
+      <label class="field">
+        <span>Descrição</span>
+        <textarea id="projectDescription" rows="2" placeholder="Opcional"></textarea>
+      </label>
+      <div class="field-row">
+        <label class="field">
+          <span>Prazo</span>
+          <input type="date" id="projectDeadline">
+        </label>
+        <label class="field">
+          <span>Estimativa total (minutos)</span>
+          <input type="number" id="projectEstimate" min="30" step="30" placeholder="Ex.: 2400 (40h)">
+        </label>
+      </div>
+      <div class="modal-actions">
+        <div></div>
+        <div class="modal-actions-right">
+          <button type="button" class="btn btn-text" id="projectCancelBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Criar projeto</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Meu dia · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">
+      <a class="link" href="{{ url_for('planning.myday_page', date=prev_day) }}">{{ icons.icon('chevron-left', 13) }}</a>
+      Planejamento diário
+      <a class="link" href="{{ url_for('planning.myday_page', date=next_day) }}">{{ icons.icon('chevron-right', 13) }}</a>
+    </p>
+    <h1 class="page-title">{{ day|pt_date }}</h1>
+  </div>
+  <div style="display:flex; gap:10px;">
+    <button class="btn btn-ghost" id="organizeDayBtn">{{ icons.icon('sparkles') }} Organizar meu dia</button>
+    <button class="btn btn-primary" id="openNewTask">{{ icons.icon('plus') }} Nova tarefa</button>
+  </div>
+</header>
+
+{% if not timeline.is_working_day %}
+<div class="banner banner-warning">
+  <strong>Este não é um dia útil na sua jornada.</strong>
+  <span>Ajuste isso em <a class="link" href="{{ url_for('settings.settings_page') }}">Configurações</a> se precisar trabalhar hoje.</span>
+</div>
+{% else %}
+
+<section class="panel">
+  <div class="panel-header">
+    <h2>Linha do tempo</h2>
+    <span class="empty-hint">{{ timeline.work_start }} – {{ timeline.work_end }} · arraste uma tarefa para outro horário</span>
+  </div>
+  <div class="day-slots">
+    {% for slot in slots %}
+    {% if slot.type == 'livre' %}
+    <div class="day-slot slot-free" data-slot-time="{{ slot.start }}" data-drop-target>
+      <span class="slot-time">{{ slot.start }}</span>
+      <span class="slot-add">{{ icons.icon('plus', 12) }} tarefa</span>
+    </div>
+    {% elif slot.is_start %}
+    <div class="day-slot slot-{{ slot.type }} {{ 'priority-' + slot.priority if slot.priority }}"
+         {% if slot.task_id %}draggable="true" data-drag-task="{{ slot.task_id }}"{% endif %}>
+      <span class="slot-time">{{ slot.start }}</span>
+      <span class="slot-label">
+        {% if slot.type == 'tarefa' %}
+          {% if slot.status == 'em_andamento' %}{{ icons.icon('clock', 13) }}{% elif slot.status == 'concluida' %}{{ icons.icon('check-circle', 13) }}{% endif %}
+        {% elif slot.type == 'pausa' %}{{ icons.icon('coffee', 13) }}{% else %}{{ icons.icon('pin', 13) }}{% endif %}
+        {{ slot.label }}
+      </span>
+      {% if slot.task_id and slot.status not in ('concluida',) %}
+      <span class="slot-actions">
+        {% if slot.is_running %}
+        <button class="btn btn-ghost btn-small" data-timer-pause="{{ slot.task_id }}">{{ icons.icon('pause', 12) }}</button>
+        {% else %}
+        <button class="btn btn-ghost btn-small" data-timer-start="{{ slot.task_id }}">{{ icons.icon('play', 12) }}</button>
+        {% endif %}
+      </span>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="day-slot slot-continues"></div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+{% if timeline.unscheduled_tasks %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Sem horário definido</h2>
+    <span class="empty-hint">arraste para um horário livre na timeline</span>
+  </div>
+  <div class="chip-tasks">
+    {% for task in timeline.unscheduled_tasks %}
+    <div class="chip-task priority-{{ task.priority }}" draggable="true" data-drag-task="{{ task.id }}">
+      {{ task.name }} <small>{{ task.estimated_minutes|hm if task.estimated_minutes else '' }}</small>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endif %}
+
+{% include "partials/task_modal.html" %}
+{% include "partials/organize_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+<script src="{{ url_for('static', filename='js/myday.js') }}" data-date="{{ day.isoformat() }}"></script>
+{% endblock %}

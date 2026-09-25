@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Notas · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Bloco de notas</p>
+    <h1 class="page-title">Notas</h1>
+  </div>
+  <div class="notes-head-actions">
+    <span class="save-status" id="saveStatus" aria-live="polite"></span>
+    <label class="search-box">{{ icons.icon('search', 16) }}<input id="noteSearch" type="search" placeholder="Buscar (Ctrl+K)"></label>
+    <button class="btn btn-ghost" id="importBtn" type="button" title="Importar arquivos .md ou .txt (ou arraste para a página)">{{ icons.icon('download', 16) }} Importar</button>
+    <a class="btn btn-ghost" id="exportBtn" href="/api/export?notebook=all" title="Baixar as notas como arquivos .md">{{ icons.icon('download', 16) }} Exportar</a>
+    <input type="file" id="importInput" accept=".md,.markdown,.txt,text/markdown,text/plain" multiple hidden>
+    <button class="btn btn-primary" id="newNoteBtn" type="button">{{ icons.icon('plus', 16) }} Nova nota</button>
+  </div>
+</header>
+
+<section class="notebook-row" id="notebookRow" aria-label="Cadernos"></section>
+
+<section class="notebook-toolbar" id="notebookToolbar" hidden>
+  <input class="notebook-name-input" id="notebookName" maxlength="80" aria-label="Nome do caderno">
+  <div class="swatches" id="notebookSwatches"></div>
+  <button class="link link-danger" id="notebookDelete" type="button">Excluir caderno</button>
+</section>
+
+<div class="drop-hint" id="dropHint">Solte os arquivos .md / .txt para virarem notas</div>
+<div class="segmented" id="viewTabs" role="tablist">
+  <button type="button" data-view="recent" class="is-active">Recentes</button>
+  <button type="button" data-view="pinned">Fixadas</button>
+  <button type="button" data-view="archived">Arquivo</button>
+</div>
+
+<section class="notes-grid" id="notesGrid"></section>
+
+<div class="empty-state" id="notesEmpty" hidden>
+  <div class="empty-icon" id="emptyIcon"></div>
+  <p id="emptyText"></p>
+</div>
+
+<div class="note-editor" id="noteEditor" data-view="split" role="dialog" aria-modal="true" aria-label="Editor de nota">
+  <div class="ne-panel">
+    <header class="ne-head">
+      <input class="ne-title" id="neTitle" placeholder="Sem título" maxlength="150">
+      <div class="segmented ne-views">
+        <button type="button" data-ne-view="edit">Editar</button>
+        <button type="button" data-ne-view="split" class="is-active">Dividir</button>
+        <button type="button" data-ne-view="preview">Ler</button>
+      </div>
+      <button class="btn btn-primary btn-small" id="neClose" type="button">Concluir</button>
+    </header>
+    <div class="ne-body">
+      <textarea class="ne-text" id="neBody" placeholder="Escreva em Markdown: # título, **negrito**, - [ ] tarefa, - lista…" spellcheck="true"></textarea>
+      <article class="ne-preview" id="nePreview"></article>
+    </div>
+    <footer class="ne-foot"><span id="neMeta"></span><span>Ctrl+S salva · Esc fecha · salva sozinho</span></footer>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/notes-editor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% import "partials/icons.html" as icons %}
+<div class="modal-overlay" id="completionOverlay">
+  <div class="modal modal-small" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>Tarefa concluída</h2>
+      <button class="modal-close" id="completionClose" aria-label="Fechar">{{ icons.icon('x', 14) }}</button>
+    </div>
+
+    <p class="completion-task-name" id="completionTaskName">—</p>
+
+    <div class="completion-compare" id="completionCompare"></div>
+
+    <div class="completion-feedback">
+      <p class="field-label">Como foi a tarefa?</p>
+      <div class="mood-picker" id="moodPicker">
+        <button type="button" class="mood-btn" data-mood="facil">{{ icons.icon('smile') }}<span>Fácil</span></button>
+        <button type="button" class="mood-btn" data-mood="normal">{{ icons.icon('meh') }}<span>Normal</span></button>
+        <button type="button" class="mood-btn" data-mood="dificil">{{ icons.icon('frown') }}<span>Difícil</span></button>
+        <button type="button" class="mood-btn" data-mood="muito_dificil">{{ icons.icon('alert-circle') }}<span>Muito difícil</span></button>
+      </div>
+    </div>
+
+    <div class="completion-feedback" id="delayReasonBlock" style="display:none;">
+      <p class="field-label">Por que demorou mais que o previsto? <span class="field-optional">(opcional)</span></p>
+      <select id="delayReasonSelect">
+        <option value="">Selecionar...</option>
+        <option value="complexidade">Complexidade maior que o esperado</option>
+        <option value="interrupcao">Interrupção</option>
+        <option value="falta_informacao">Falta de informação</option>
+        <option value="problema_tecnico">Problema técnico</option>
+        <option value="reuniao">Reunião</option>
+        <option value="dependencia_terceiros">Dependência de outra pessoa</option>
+        <option value="estimativa_incorreta">Estimativa incorreta</option>
+        <option value="outro">Outro motivo</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+      <div></div>
+      <button type="button" class="btn btn-primary" id="completionDoneBtn">Concluir</button>
+    </div>
+  </div>
+</div>

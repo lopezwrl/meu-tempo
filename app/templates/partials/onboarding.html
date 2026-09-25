@@ -1,0 +1,34 @@
+<div class="onboarding" id="onboarding" role="dialog" aria-modal="true" aria-labelledby="obTitle">
+  <div class="onboarding-card">
+    <div class="ob-dots" aria-hidden="true"><i class="is-on"></i><i></i><i></i></div>
+
+    <section class="ob-step is-active" data-step="1">
+      <h2 id="obTitle">Bem-vindo ao Meu Tempo</h2>
+      <p>Notas, tarefas e o controle real do seu tempo, num só lugar. Como podemos te chamar?</p>
+      <input class="ob-input" id="obName" placeholder="Seu nome" maxlength="60" autocomplete="off">
+    </section>
+
+    <section class="ob-step" data-step="2">
+      <h2>Como é o seu dia de trabalho?</h2>
+      <p>Usamos isso para montar o "Meu dia" e avisar quando ele estiver cheio demais. Dá para ajustar cada dia depois, em Configurações.</p>
+      <div class="ob-row">
+        <label>Começa às <input class="ob-input" type="time" id="obStart" value="08:00"></label>
+        <label>Termina às <input class="ob-input" type="time" id="obEnd" value="18:00"></label>
+      </div>
+    </section>
+
+    <section class="ob-step" data-step="3">
+      <h2>Seu primeiro caderno</h2>
+      <p>Cadernos organizam suas notas por assunto: Trabalho, Estudos, Ideias… Escolha um nome para começar.</p>
+      <input class="ob-input" id="obNotebook" value="Geral" maxlength="40" autocomplete="off">
+    </section>
+
+    <div class="ob-actions">
+      <button class="btn btn-text" id="obSkip" type="button">Pular</button>
+      <div>
+        <button class="btn btn-ghost" id="obBack" type="button" hidden>Voltar</button>
+        <button class="btn btn-primary" id="obNext" type="button">Continuar</button>
+      </div>
+    </div>
+  </div>
+</div>

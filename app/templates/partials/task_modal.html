@@ -1,0 +1,115 @@
+{% import "partials/icons.html" as icons %}
+<div class="modal-overlay" id="taskModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+    <div class="modal-header">
+      <h2 id="taskModalTitle">Nova tarefa</h2>
+      <button class="modal-close" id="taskModalClose" aria-label="Fechar">{{ icons.icon('x', 14) }}</button>
+    </div>
+
+    <form id="taskForm" class="task-form">
+      <input type="hidden" id="taskId" name="id">
+
+      <label class="field">
+        <span>Nome da tarefa</span>
+        <input type="text" id="taskName" name="name" placeholder="Ex.: Criar relatório de vendas" required autocomplete="off">
+      </label>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Categoria</span>
+          <select id="taskCategory" name="category_id">
+            <option value="">Sem categoria</option>
+            {% for c in categories %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label class="field">
+          <span>Projeto</span>
+          <select id="taskProject" name="project_id">
+            <option value="">Sem projeto</option>
+            {% for p in projects %}
+            <option value="{{ p.id }}">{{ p.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Prioridade</span>
+          <select id="taskPriority" name="priority">
+            <option value="baixa">Baixa</option>
+            <option value="media" selected>Média</option>
+            <option value="alta">Alta</option>
+            <option value="urgente">Urgente</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Data</span>
+          <input type="date" id="taskDate" name="date">
+        </label>
+        <label class="field">
+          <span>Horário</span>
+          <input type="time" id="taskTime" name="time">
+        </label>
+        <label class="field">
+          <span>Prazo</span>
+          <input type="time" id="taskDeadline" name="deadline_time">
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Tempo estimado (minutos)</span>
+        <input type="number" id="taskEstimate" name="estimated_minutes" min="5" step="5" placeholder="Ex.: 90">
+      </label>
+      <p class="estimate-hint" id="estimateHint"></p>
+
+      <label class="field">
+        <span>Descrição</span>
+        <textarea id="taskDescription" name="description" rows="2" placeholder="Detalhes da tarefa (opcional)"></textarea>
+      </label>
+
+      <label class="field">
+        <span>Tags (separadas por vírgula)</span>
+        <input type="text" id="taskTags" name="tags" placeholder="sql, winthor, urgente">
+      </label>
+
+      <label class="field">
+        <span>Observações</span>
+        <textarea id="taskObservations" name="observations" rows="2" placeholder="Anotações adicionais (opcional)"></textarea>
+      </label>
+
+      <div class="task-extras" id="taskExtras" hidden>
+        <section class="extras-block">
+          <div class="extras-title"><span>Subtarefas</span><small id="subProgress"></small></div>
+          <div class="progress-track"><i id="subBar"></i></div>
+          <ul class="subtask-list" id="subList"></ul>
+          <div class="extras-add">
+            <input type="text" id="subInput" placeholder="Nova subtarefa e Enter" maxlength="200" autocomplete="off">
+            <button type="button" class="btn btn-ghost btn-small" id="subAddBtn">Adicionar</button>
+          </div>
+        </section>
+        <section class="extras-block">
+          <div class="extras-title"><span>Notas ligadas</span></div>
+          <ul class="linked-notes" id="linkedNotes"></ul>
+          <div class="extras-add">
+            <select id="linkSelect"><option value="">Vincular nota existente…</option></select>
+            <button type="button" class="btn btn-ghost btn-small" id="newLinkedNote">+ Nova nota</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="taskDeleteBtn" style="display:none;">Excluir</button>
+        <div class="modal-actions-right">
+          <button type="button" class="btn btn-text" id="taskCancelBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="taskSubmitBtn">Adicionar tarefa</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+{% import "partials/icons.html" as icons %}
+<div class="modal-overlay" id="balanceModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>Sugestão de equilíbrio da semana</h2>
+      <button class="modal-close" id="balanceModalClose" aria-label="Fechar">{{ icons.icon('x', 14) }}</button>
+    </div>
+    <div id="balanceModalBody">
+      <p class="empty-hint">Calculando...</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-text" id="balanceCancelBtn">Cancelar</button>
+      <button type="button" class="btn btn-primary" id="balanceApplyBtn" style="display:none;">Aplicar sugestão</button>
+    </div>
+  </div>
+</div>

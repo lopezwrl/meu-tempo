@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Configurações · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Configurações</p>
+    <h1 class="page-title">Jornada e compromissos</h1>
+  </div>
+</header>
+
+<section class="panel">
+  <div class="panel-header"><h2>Jornada de trabalho</h2></div>
+  <p class="empty-hint">Usada para calcular sua capacidade diária, montar a timeline de "Meu dia" e detectar sobrecarga.</p>
+  <table class="history-table schedule-table">
+    <thead>
+      <tr><th>Dia</th><th>Trabalha?</th><th>Início</th><th>Fim</th><th>Almoço início</th><th>Almoço fim</th></tr>
+    </thead>
+    <tbody id="scheduleBody">
+      {% for s in schedules %}
+      <tr data-weekday="{{ s.weekday }}">
+        <td>{{ s.weekday_label }}</td>
+        <td><input type="checkbox" data-field="is_working_day" {{ 'checked' if s.is_working_day }}></td>
+        <td><input type="time" data-field="start_time" value="{{ s.start_time }}"></td>
+        <td><input type="time" data-field="end_time" value="{{ s.end_time }}"></td>
+        <td><input type="time" data-field="lunch_start" value="{{ s.lunch_start or '' }}"></td>
+        <td><input type="time" data-field="lunch_end" value="{{ s.lunch_end or '' }}"></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div style="margin-top:14px;">
+    <button class="btn btn-primary" id="saveScheduleBtn">Salvar jornada</button>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-header"><h2>Compromissos fixos</h2></div>
+
+  <div class="task-list" id="commitmentsList">
+    {% for c in commitments %}
+    <div class="task-row" data-commitment-id="{{ c.id }}">
+      <div class="task-row-body">
+        <span class="task-row-name">{{ c.name }}</span>
+        <div class="task-row-meta">
+          {% if c.recurring %}<span>{{ icons.icon('repeat', 12) }} Toda {{ ['segunda','terça','quarta','quinta','sexta','sábado','domingo'][c.weekday] }}</span>
+          {% else %}<span>{{ icons.icon('calendar', 12) }} {{ c.specific_date }}</span>{% endif %}
+          <span>{{ icons.icon('clock', 12) }} {{ c.start_time }} – {{ c.end_time }}</span>
+        </div>
+      </div>
+      <button class="btn btn-text link-danger" data-delete-commitment="{{ c.id }}">Excluir</button>
+    </div>
+    {% else %}
+    <p class="empty-hint">Nenhum compromisso fixo cadastrado.</p>
+    {% endfor %}
+  </div>
+
+  <form id="commitmentForm" class="task-form" style="margin-top:18px;">
+    <label class="field">
+      <span>Nome do compromisso</span>
+      <input type="text" id="commitmentName" placeholder="Ex.: Reunião de equipe" required>
+    </label>
+    <div class="field-row">
+      <label class="field">
+        <span>Tipo</span>
+        <select id="commitmentRecurring">
+          <option value="1">Recorrente (toda semana)</option>
+          <option value="0">Data específica</option>
+        </select>
+      </label>
+      <label class="field" id="commitmentWeekdayField">
+        <span>Dia da semana</span>
+        <select id="commitmentWeekday">
+          <option value="0">Segunda</option>
+          <option value="1">Terça</option>
+          <option value="2">Quarta</option>
+          <option value="3">Quinta</option>
+          <option value="4">Sexta</option>
+          <option value="5">Sábado</option>
+          <option value="6">Domingo</option>
+        </select>
+      </label>
+      <label class="field" id="commitmentDateField" style="display:none;">
+        <span>Data</span>
+        <input type="date" id="commitmentDate">
+      </label>
+    </div>
+    <div class="field-row">
+      <label class="field">
+        <span>Início</span>
+        <input type="time" id="commitmentStart" required>
+      </label>
+      <label class="field">
+        <span>Fim</span>
+        <input type="time" id="commitmentEnd" required>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <div></div>
+      <button type="submit" class="btn btn-primary">Adicionar compromisso</button>
+    </div>
+  </form>
+</section>
+
+<section class="panel" style="margin-top:20px;">
+  <div class="panel-header"><h2>Cronômetro</h2></div>
+  <p class="empty-hint">Quando você volta depois de ficar sem mexer no app com um cronômetro rodando, perguntamos se esse tempo deve ser descontado. Isso evita horas "fantasma" no seu histórico.</p>
+  <div class="idle-setting">
+    <label>Avisar após <input type="number" id="idleMinutes" min="0" max="240" value="{{ idle_minutes }}"> minutos sem atividade <small>(0 desliga)</small></label>
+    <button class="btn btn-primary btn-small" id="idleSave" type="button">Salvar</button>
+  </div>
+</section>
+
+<section class="panel data-panel" style="margin-top:20px;">
+  <div class="panel-header"><h2>Dados e backup</h2></div>
+  <p class="empty-hint">Tudo fica neste computador, em <code>instance/meutempo.db</code>. Faça um backup de vez em quando.</p>
+  <div class="data-grid">
+    <div class="data-item">
+      <strong>{{ icons.icon('shield', 16) }} Backup completo</strong>
+      <span>Um arquivo .json com tarefas, notas, cadernos, projetos e sessões.</span>
+      <a class="btn btn-primary btn-small" href="/api/backup">{{ icons.icon('download', 14) }} Baixar backup</a>
+    </div>
+    <div class="data-item">
+      <strong>Restaurar backup</strong>
+      <span>Substitui tudo o que existe agora. Uma cópia do banco atual é guardada antes.</span>
+      <button class="btn btn-ghost btn-small" id="restoreBtn" type="button">Escolher arquivo…</button>
+      <input type="file" id="restoreInput" accept=".json,application/json" hidden>
+    </div>
+    <div class="data-item">
+      <strong>Planilhas</strong>
+      <span>Para abrir no Excel: relatório completo ou CSV.</span>
+      <div class="data-links">
+        <a class="btn btn-ghost btn-small" href="/api/export/report.xlsx">Relatório .xlsx</a>
+        <a class="btn btn-ghost btn-small" href="/api/export/tasks.csv">Tarefas .csv</a>
+        <a class="btn btn-ghost btn-small" href="/api/export/sessions.csv">Sessões .csv</a>
+      </div>
+    </div>
+    <div class="data-item">
+      <strong>Notas em Markdown</strong>
+      <span>Todas as notas como arquivos .md, uma pasta por caderno.</span>
+      <a class="btn btn-ghost btn-small" href="/api/export?notebook=all">Baixar .zip</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+<script src="{{ url_for('static', filename='js/data.js') }}"></script>
+{% endblock %}

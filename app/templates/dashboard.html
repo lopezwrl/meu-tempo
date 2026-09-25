@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Início · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">{{ today|pt_date }}</p>
+    <h1 class="page-title"><span data-greeting>Bom dia</span>, {{ user.name }}.</h1>
+  </div>
+  <div style="display:flex; gap:10px;">
+    <a class="btn btn-ghost" href="{{ url_for('planning.myday_page') }}">{{ icons.icon('calendar-days') }} Meu dia</a>
+    <button class="btn btn-primary" id="openNewTask">{{ icons.icon('plus') }} Nova tarefa</button>
+  </div>
+</header>
+
+{% if overdue_tasks %}
+<div class="banner banner-warning">
+  <strong>{{ icons.icon('alert-triangle') }} Você tem {{ overdue_tasks|length }} tarefa{{ 's' if overdue_tasks|length > 1 else '' }} atrasada{{ 's' if overdue_tasks|length > 1 else '' }}.</strong>
+  <span>Vale revisar e reorganizar antes de seguir com o dia.</span>
+</div>
+{% endif %}
+
+{% if overload_minutes > 0 %}
+<div class="banner banner-danger">
+  <strong>{{ icons.icon('alert-circle') }} Seu dia está sobrecarregado.</strong>
+  <span>Faltam {{ overload_minutes|hm }} para caber tudo o que ainda resta hoje.</span>
+  {% if postpone_suggestions %}
+  <div class="postpone-list">
+    {% for s in postpone_suggestions %}
+    <div class="postpone-row">
+      <span>{{ s.name }} <small>({{ s.estimated_minutes|hm }})</small></span>
+      <button class="btn btn-ghost btn-small" data-postpone-task="{{ s.task_id }}">Mover para amanhã</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% elif remaining_minutes > 0 %}
+<div class="banner banner-success">
+  <strong>{{ icons.icon('check-circle') }} Seu dia está dentro da capacidade.</strong>
+  <span>Restam {{ remaining_minutes|hm }} de tarefas e você ainda tem {{ available_minutes|hm }} disponíveis.</span>
+</div>
+{% endif %}
+
+{% if active_task %}
+<section class="panel panel-live">
+  <div class="live-info">
+    <span class="badge badge-live">{{ icons.icon('clock', 13) }} Trabalhando agora</span>
+    <span class="live-task-name">{{ active_task.name }}</span>
+  </div>
+  <div class="live-actions">
+    <span class="live-clock" data-live-clock="{{ active_task.id }}">{{ '%02d:%02d:%02d'|format(active_task.worked_seconds // 3600, (active_task.worked_seconds % 3600) // 60, active_task.worked_seconds % 60) }}</span>
+    <button class="btn btn-ghost btn-small" data-timer-pause="{{ active_task.id }}">{{ icons.icon('pause', 13) }} Pausar</button>
+    <button class="btn btn-primary btn-small" data-timer-finish="{{ active_task.id }}" data-task-name="{{ active_task.name }}" data-estimated-minutes="{{ active_task.estimated_minutes or '' }}">{{ icons.icon('stop', 13) }} Finalizar</button>
+  </div>
+</section>
+{% endif %}
+
+<section class="stat-grid">
+  <div class="stat-card stat-card--hero">
+    <span class="stat-label">Hoje</span>
+    <span class="stat-value">{{ today_tasks|length }}</span>
+    <span class="stat-sub">tarefa{{ 's' if today_tasks|length != 1 else '' }} no dia</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Concluídas</span>
+    <span class="stat-value">{{ completed_today|length }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Pendentes</span>
+    <span class="stat-value">{{ pending_today|length }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Tempo planejado</span>
+    <span class="stat-value">{{ planned_minutes|hm }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Tempo realizado</span>
+    <span class="stat-value">{{ worked_minutes|hm }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Eficiência</span>
+    <span class="stat-value">{{ (efficiency ~ '%') if efficiency is not none else '—' }}</span>
+  </div>
+</section>
+
+{% if achievements.achieved %}
+<section class="achievements-strip">
+  {% for a in achievements.achieved[-3:] %}
+  <span class="achievement-pill">{{ icons.icon('flag', 12) }} {{ a.title }}</span>
+  {% endfor %}
+  <a class="link" href="{{ url_for('reports.history_page') }}#conquistas">Ver todas</a>
+</section>
+{% endif %}
+
+<section class="panel">
+  <div class="panel-header">
+    <h2>Linha do dia</h2>
+    <a href="{{ url_for('tasks.tasks_page') }}" class="link">Ver todas as tarefas {{ icons.icon('chevron-right', 13) }}</a>
+  </div>
+
+  {% if today_tasks %}
+  <ul class="timeline">
+    {% for task in today_tasks %}
+    <li class="timeline-item priority-{{ task.priority }} {{ 'is-done' if task.status == 'concluida' }}" data-task-row="{{ task.id }}">
+      <span class="timeline-time">{{ task.time or '—' }}</span>
+      <div class="timeline-body">
+        <span class="timeline-name">{{ task.name }}</span>
+        <span class="timeline-meta">
+          {% if task.category %}{{ icons.category_icon(task.category.icon) }} {{ task.category.name }}{% endif %}
+          {% if task.estimated_minutes %} · {{ icons.icon('target', 12) }} {{ task.estimated_minutes|hm }}{% endif %}
+          {% if task.worked_minutes %} · {{ icons.icon('clock', 12) }} {{ task.worked_minutes|hm }}{% endif %}
+        </span>
+      </div>
+      {% if task.status != 'concluida' %}
+        {% if task.is_running %}
+        <button class="btn btn-ghost btn-small" data-timer-pause="{{ task.id }}">{{ icons.icon('pause', 13) }}</button>
+        {% else %}
+        <button class="btn btn-ghost btn-small" data-timer-start="{{ task.id }}">{{ icons.icon('play', 13) }}</button>
+        {% endif %}
+      {% endif %}
+      <button class="task-check {{ 'is-checked' if task.status == 'concluida' }}" data-task-id="{{ task.id }}" data-complete-toggle title="Concluir tarefa">{{ icons.icon('check', 13) }}</button>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="empty-state">
+    <p>Nenhuma tarefa marcada para hoje ainda.</p>
+    <button class="btn btn-ghost" id="emptyStateNewTask">Criar a primeira tarefa</button>
+  </div>
+  {% endif %}
+</section>
+
+{% include "partials/task_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

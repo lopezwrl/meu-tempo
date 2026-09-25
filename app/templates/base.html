@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Meu Tempo{% endblock %}</title>
+  <script>
+    // Aplica tema e decide a abertura antes de pintar a página (evita "piscar").
+    try {
+      var t = localStorage.getItem("meutempo-theme");
+      if (!t && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t) document.documentElement.setAttribute("data-theme", t);
+      if (sessionStorage.getItem("mt-splash")) document.documentElement.classList.add("no-splash");
+    } catch (e) {}
+  </script>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#2F6F6B">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="splash" id="splash" aria-hidden="true">
+    <svg class="splash-mark" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round">
+      <circle class="splash-ring" cx="32" cy="32" r="28"/>
+      <path class="splash-hand" d="M32 32V16"/>
+      <path class="splash-hand min" d="M32 32l11 7"/>
+      <circle class="splash-dot" cx="32" cy="32" r="3" stroke="none"/>
+    </svg>
+    <p class="splash-name">Meu Tempo</p>
+  </div>
+  {% import "partials/icons.html" as icons %}
+  {% set more_pages = ['week', 'calendar', 'projects', 'history', 'settings'] %}
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="{{ url_for('main.dashboard') }}">
+        <span class="brand-mark">{{ icons.icon('clock', 22) }}</span>
+        <span class="brand-name">Meu Tempo</span>
+      </a>
+    </header>
+
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+
+    <nav class="dock" aria-label="Principal">
+      <a href="{{ url_for('main.dashboard') }}" class="dock-item {{ 'is-active' if active_page == 'dashboard' }}">
+        {{ icons.icon('home', 18) }}<span class="dock-label">Início</span>
+      </a>
+      <a href="{{ url_for('planning.myday_page') }}" class="dock-item {{ 'is-active' if active_page == 'myday' }}">
+        {{ icons.icon('calendar-days', 18) }}<span class="dock-label">Meu dia</span>
+      </a>
+      <a href="{{ url_for('tasks.tasks_page') }}" class="dock-item {{ 'is-active' if active_page == 'tasks' }}">
+        {{ icons.icon('list', 18) }}<span class="dock-label">Tarefas</span>
+      </a>
+      <a href="{{ url_for('notes.notes_page') }}" class="dock-item {{ 'is-active' if active_page == 'notes' }}">
+        {{ icons.icon('file-text', 18) }}<span class="dock-label">Notas</span>
+      </a>
+      <div class="dock-more">
+        <button class="dock-item {{ 'is-active' if active_page in more_pages }}" id="moreBtn" type="button" aria-haspopup="true" aria-expanded="false">
+          {{ icons.icon('grid', 18) }}<span class="dock-label">Mais</span>
+        </button>
+        <div class="dock-menu" id="moreMenu" hidden>
+          <a href="{{ url_for('planning.week_page') }}" class="{{ 'is-active' if active_page == 'week' }}">{{ icons.icon('calendar-week', 16) }} Minha semana</a>
+          <a href="{{ url_for('planning.calendar_page') }}" class="{{ 'is-active' if active_page == 'calendar' }}">{{ icons.icon('calendar', 16) }} Calendário</a>
+          <a href="{{ url_for('projects.projects_page') }}" class="{{ 'is-active' if active_page == 'projects' }}">{{ icons.icon('folder', 16) }} Projetos</a>
+          <a href="{{ url_for('reports.history_page') }}" class="{{ 'is-active' if active_page == 'history' }}">{{ icons.icon('clock', 16) }} Histórico</a>
+          <a href="{{ url_for('settings.settings_page') }}" class="{{ 'is-active' if active_page == 'settings' }}">{{ icons.icon('settings', 16) }} Configurações</a>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema">
+            <span id="themeIcon">{{ icons.icon('moon', 16) }}</span>
+            <span id="themeLabel">Modo escuro</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="toast-stack" id="toastStack"></div>
+  {% include "partials/global_timer.html" %}
+  {% include "partials/timer_conflict_modal.html" %}
+  {% include "partials/completion_modal.html" %}
+  {% if needs_onboarding %}{% include "partials/onboarding.html" %}{% endif %}
+
+  <script>
+    (function () {
+      var splash = document.getElementById("splash");
+      if (!splash || document.documentElement.classList.contains("no-splash")) return;
+      try { sessionStorage.setItem("mt-splash", "1"); } catch (e) {}
+      setTimeout(function () {
+        splash.classList.add("is-leaving");
+        setTimeout(function () { splash.remove(); }, 600);
+      }, 1500);
+    })();
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function () {});
+  </script>
+  <script src="{{ url_for('static', filename='js/icons.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/motion.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/task-extras.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/idle.js') }}" data-idle-minutes="{{ idle_minutes }}"></script>
+  {% if needs_onboarding %}<script src="{{ url_for('static', filename='js/onboarding.js') }}"></script>{% endif %}
+  {% block scripts %}{% endblock %}
+</body>
+</html>
