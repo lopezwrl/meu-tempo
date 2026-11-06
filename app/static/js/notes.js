@@ -54,19 +54,23 @@
 
   function renderNotebooks() {
     const c = counts();
+    const uniformColor = "#E7B4C8";
     row.replaceChildren();
     const tile = (id, name, count, color) => {
       const b = el("button", "notebook-tile" + (state.notebook === id ? " is-active" : ""));
       b.type = "button";
-      b.style.setProperty("--nb", color);
+      b.style.setProperty("--nb", color || uniformColor);
+      b.style.background = color || uniformColor;
       b.append(el("span", "notebook-tile-name", name), el("span", "notebook-tile-count", count + (count === 1 ? " nota" : " notas")));
       b.addEventListener("click", () => { state.notebook = id; renderAll(); });
       return b;
     };
-    row.append(tile("all", "Todas", c.all, "#E7B4C8"));
-    state.notebooks.forEach((nb) => row.append(tile(nb.id, nb.name, c.by[nb.id] || 0, nb.color)));
+    row.append(tile("all", "Todas", c.all, uniformColor));
+    state.notebooks.forEach((nb) => row.append(tile(nb.id, nb.name, c.by[nb.id] || 0, uniformColor)));
     const add = el("button", "notebook-tile notebook-tile-add");
     add.type = "button";
+    add.style.setProperty("--nb", uniformColor);
+    add.style.background = uniformColor;
     add.append(el("span", "notebook-tile-name", "+ Novo caderno"));
     add.addEventListener("click", createNotebook);
     row.append(add);
