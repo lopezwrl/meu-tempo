@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}{{ project.name }} · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow"><a href="{{ url_for('projects.projects_page') }}" class="link">{{ icons.icon('chevron-left', 13) }} Projetos</a></p>
+    <h1 class="page-title">{{ project.name }}</h1>
+  </div>
+  <button class="btn btn-primary" id="openNewTask">{{ icons.icon('plus') }} Tarefa neste projeto</button>
+</header>
+
+{% if stats.risk and stats.risk.level in ('risco', 'atrasado') %}
+<div class="banner banner-danger">
+  <strong>{{ icons.icon('alert-circle') }} {{ 'Risco de atraso' if stats.risk.level == 'risco' else 'Projeto atrasado' }}</strong>
+  <span>{{ stats.risk.message }}</span>
+</div>
+{% endif %}
+
+<section class="stat-grid">
+  <div class="stat-card stat-card--hero" style="background: {{ project.color }}">
+    <span class="stat-label">Progresso</span>
+    <span class="stat-value">{{ stats.progress_percent }}%</span>
+    <span class="stat-sub">{{ stats.done_tasks }}/{{ stats.total_tasks }} tarefas concluídas</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Estimado</span>
+    <span class="stat-value">{{ (stats.estimated_minutes|hm) if stats.estimated_minutes else '—' }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Trabalhado</span>
+    <span class="stat-value">{{ stats.worked_minutes|hm }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Restante</span>
+    <span class="stat-value">{{ (stats.remaining_minutes|hm) if stats.remaining_minutes is not none else '—' }}</span>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-header"><h2>Tarefas do projeto</h2></div>
+  {% if tasks %}
+  <div class="task-list">
+    {% for task in tasks %}
+    <article class="task-row priority-{{ task.priority }} {{ 'is-done' if task.status == 'concluida' }}" data-task-row="{{ task.id }}">
+      <button class="task-check {{ 'is-checked' if task.status == 'concluida' }}" data-task-id="{{ task.id }}" data-complete-toggle title="Concluir tarefa">{{ icons.icon('check', 13) }}</button>
+      <div class="task-row-body">
+        <span class="task-row-name">{{ task.name }}</span>
+        <div class="task-row-meta">
+          {% if task.estimated_minutes %}<span>{{ icons.icon('target', 12) }} {{ task.estimated_minutes|hm }}</span>{% endif %}
+          {% if task.worked_minutes %}<span>{{ icons.icon('clock', 12) }} {{ task.worked_minutes|hm }}</span>{% endif %}
+        </div>
+      </div>
+      {% if task.status != 'concluida' %}
+        {% if task.is_running %}
+        <button class="btn btn-ghost btn-small" data-timer-pause="{{ task.id }}">{{ icons.icon('pause', 13) }}</button>
+        {% else %}
+        <button class="btn btn-ghost btn-small" data-timer-start="{{ task.id }}">{{ icons.icon('play', 13) }}</button>
+        {% endif %}
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state"><p>Nenhuma tarefa vinculada a este projeto ainda.</p></div>
+  {% endif %}
+</section>
+
+{% include "partials/task_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const projectSelect = document.getElementById("taskProject");
+    if (projectSelect) projectSelect.value = "{{ project.id }}";
+  });
+</script>
+{% endblock %}

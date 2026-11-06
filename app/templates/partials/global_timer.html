@@ -1,0 +1,10 @@
+{% import "partials/icons.html" as icons %}
+<div class="global-timer" id="globalTimer" style="display:none;">
+  <div class="global-timer-badge">{{ icons.icon('clock') }} Trabalhando</div>
+  <div class="global-timer-task" id="globalTimerTask">—</div>
+  <div class="global-timer-clock" id="globalTimerClock">00:00:00</div>
+  <div class="global-timer-actions">
+    <button class="btn btn-ghost btn-small" id="globalTimerPause">{{ icons.icon('pause') }} Pausar</button>
+    <button class="btn btn-primary btn-small" id="globalTimerFinish">{{ icons.icon('stop') }} Finalizar</button>
+  </div>
+</div>

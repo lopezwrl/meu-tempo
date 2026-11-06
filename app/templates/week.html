@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Minha semana · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">
+      <a class="link" href="{{ url_for('planning.week_page', start=prev_start) }}">{{ icons.icon('chevron-left', 13) }}</a>
+      Planejamento semanal
+      <a class="link" href="{{ url_for('planning.week_page', start=next_start) }}">{{ icons.icon('chevron-right', 13) }}</a>
+    </p>
+    <h1 class="page-title">Minha semana</h1>
+  </div>
+  <button class="btn btn-primary" id="balanceWeekBtn">{{ icons.icon('shuffle') }} Equilibrar semana</button>
+</header>
+
+<section class="week-grid">
+  {% for day in days %}
+  <a class="week-day-card {{ 'is-overloaded' if day.percent > 100 }} {{ 'is-light' if day.percent < 70 }}"
+     href="{{ url_for('planning.myday_page', date=day.date) }}">
+    <span class="week-day-label">{{ day.weekday_label }}</span>
+    <span class="week-day-date">{{ day.date[8:10] }}/{{ day.date[5:7] }}</span>
+    <div class="progress-bar"><div class="progress-fill {{ 'is-danger' if day.percent > 100 }}" style="width: {{ [day.percent, 100]|min }}%"></div></div>
+    <span class="week-day-percent">{{ day.percent }}%</span>
+    <span class="week-day-meta">{{ day.task_count }} tarefa{{ 's' if day.task_count != 1 }} · {{ day.planned_minutes|hm }}</span>
+  </a>
+  {% endfor %}
+</section>
+
+{% include "partials/balance_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/week.js') }}" data-start="{{ start.isoformat() }}"></script>
+{% endblock %}

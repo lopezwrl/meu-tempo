@@ -1,0 +1,15 @@
+{% import "partials/icons.html" as icons %}
+<div class="modal-overlay" id="timerConflictOverlay">
+  <div class="modal modal-small" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>{{ icons.icon('alert-triangle', 18) }} Você já está trabalhando em outra tarefa</h2>
+    </div>
+    <p class="conflict-current-label">Tarefa atual</p>
+    <p class="conflict-current-name" id="conflictTaskName">—</p>
+    <p class="conflict-current-time" id="conflictTaskTime">00:00:00</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-text" id="conflictKeepBtn">Continuar tarefa atual</button>
+      <button type="button" class="btn btn-primary" id="conflictSwitchBtn">Finalizar e iniciar nova</button>
+    </div>
+  </div>
+</div>
