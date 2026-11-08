@@ -96,7 +96,7 @@ def api_delete_commitment(commitment_id):
     return jsonify({"ok": True})
 
 
-@settings_bp.route("/api/settings/idle", methods=["POST"])
+@settings_bp.route("/api/settings/idle", methods=["POST", "PUT"])
 def api_set_idle():
     from app.models.user import User
     try:

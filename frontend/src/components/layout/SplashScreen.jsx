@@ -168,3 +168,4 @@ export function SplashScreen({ onComplete, forceShow = false }) {
     </AnimatePresence>
   );
 }
+
