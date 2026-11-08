@@ -1,14 +1,14 @@
 from datetime import date
 from flask import Blueprint, render_template, jsonify, send_from_directory, current_app
+from app.models.db import db
 from app.models.task import Task
 from app.models.category import Category
 from app.models.project import Project
 from app.models.user import User
-from app.services import timer_service, report_service, schedule_service, planning_service, achievements_service
+from app.services import timer_service, report_service, planning_service, achievements_service
+from app.utils.current_user import CURRENT_USER_ID
 
 main_bp = Blueprint("main", __name__)
-from app.utils.current_user import CURRENT_USER_ID
-from app.models.db import db
 
 
 @main_bp.route("/")

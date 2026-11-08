@@ -73,7 +73,7 @@ export function NoteEditor({
           });
           setSaveStatus('saved');
           setTimeout(() => setSaveStatus('idle'), 2000);
-        } catch (err) {
+        } catch {
           setSaveStatus('idle');
         }
       }, 700);

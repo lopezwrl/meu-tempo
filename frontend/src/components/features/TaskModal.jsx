@@ -64,7 +64,7 @@ export function TaskModal({
         } else {
           setSuggestion(null);
         }
-      } catch (err) {
+      } catch {
         // silent
       }
     }, 400);

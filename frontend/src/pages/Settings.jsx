@@ -11,13 +11,10 @@ import {
   Moon,
   Laptop,
   Clock,
-  Calendar,
   Shield,
   Download,
   Upload,
   Trash2,
-  Plus,
-  Check,
   User,
   Sparkles,
 } from 'lucide-react';
@@ -34,7 +31,7 @@ const WEEKDAYS = [
 
 export function Settings() {
   const queryClient = useQueryClient();
-  const { theme, setTheme, actualTheme } = useThemeStore();
+  const { theme, setTheme } = useThemeStore();
   const { user, setUser } = useUserStore();
   const { addToast } = useToast();
 

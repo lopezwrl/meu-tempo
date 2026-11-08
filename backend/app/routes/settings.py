@@ -4,9 +4,9 @@ from app.models.db import db
 from app.models.schedule import Schedule
 from app.models.fixed_commitment import FixedCommitment
 from app.services import schedule_service
+from app.utils.current_user import CURRENT_USER_ID
 
 settings_bp = Blueprint("settings", __name__)
-from app.utils.current_user import CURRENT_USER_ID
 
 
 def _get_own_commitment(commitment_id):
@@ -127,7 +127,6 @@ def api_get_user():
         "onboarded": user.onboarded,
     })
 
-
 @settings_bp.route("/api/user", methods=["PUT"])
 def api_update_user():
     from app.models.user import User
@@ -151,4 +150,3 @@ def api_update_user():
         "workday_end": user.workday_end,
         "onboarded": user.onboarded,
     })
-

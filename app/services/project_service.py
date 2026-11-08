@@ -1,8 +1,6 @@
 from datetime import date, timedelta
 from app.services import schedule_service
 
-from app.utils.current_user import CURRENT_USER_ID
-
 
 def project_stats(project):
     tasks = project.tasks

@@ -1,4 +1,4 @@
-﻿# Meu Tempo
+# Meu Tempo
 
 Meu Tempo é uma aplicação web para organizar tarefas, cronômetro de foco, blocos de notas, planejamento diário e relatórios de produtividade em um único ambiente.
 

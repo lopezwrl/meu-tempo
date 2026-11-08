@@ -80,7 +80,7 @@ export function App() {
         const u = await api.getUser();
         if (u) setUser(u);
         return u;
-      } catch (err) {
+      } catch {
         return null;
       }
     },

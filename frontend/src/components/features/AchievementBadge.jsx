@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Award, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 
 export function AchievementBadge({ achievement, index = 0 }) {
   const isUnlocked = achievement.unlocked;

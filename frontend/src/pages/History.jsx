@@ -20,9 +20,6 @@ import {
   FileSpreadsheet,
   Award,
   TrendingUp,
-  Clock,
-  CheckCircle2,
-  Calendar,
 } from 'lucide-react';
 
 export function History() {

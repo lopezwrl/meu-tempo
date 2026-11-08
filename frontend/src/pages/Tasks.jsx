@@ -9,11 +9,6 @@ import { NoteEditor } from '../components/features/NoteEditor';
 import {
   Plus,
   Filter,
-  CheckCircle,
-  Clock,
-  Sparkles,
-  Inbox,
-  Calendar,
 } from 'lucide-react';
 
 const MOTIVATIONAL_QUOTES = [
@@ -43,7 +38,6 @@ export function Tasks() {
     completeTask,
     reopenTask,
     postponeTask,
-    isLoading,
   } = useTasks();
 
   const { notes, notebooks, updateNote, togglePinNote } = useNotes();

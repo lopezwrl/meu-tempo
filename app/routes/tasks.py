@@ -1,15 +1,15 @@
-from datetime import datetime, date as date_cls
+from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, abort
 from app.models.db import db
-from app.models.task import Task, PRIORITIES, STATUSES, MOODS, DELAY_REASONS
+from app.models.task import Task, PRIORITIES, MOODS, DELAY_REASONS
 from app.models.category import Category
 from app.models.project import Project
 from app.services.estimate_service import suggest_estimate
 from app.services import timer_service, planning_service
 from app.services.activity_service import log_event
+from app.utils.current_user import CURRENT_USER_ID
 
 tasks_bp = Blueprint("tasks", __name__)
-from app.utils.current_user import CURRENT_USER_ID
 
 
 def _get_own_task(task_id):

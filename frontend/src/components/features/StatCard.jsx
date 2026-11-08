@@ -32,7 +32,6 @@ export function StatCard({
   icon: Icon,
   progress = null, // 0 to 100
   progressLabel,
-  color = 'primary',
   delay = 0,
 }) {
   return (

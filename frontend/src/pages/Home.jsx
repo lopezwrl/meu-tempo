@@ -24,7 +24,6 @@ import {
   Plus,
   ArrowRight,
   AlertTriangle,
-  Calendar,
   Sparkles,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';

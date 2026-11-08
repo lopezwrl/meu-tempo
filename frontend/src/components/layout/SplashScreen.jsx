@@ -13,7 +13,7 @@ export function SplashScreen({ onComplete, forceShow = false }) {
       const alreadyShown = sessionStorage.getItem('mt-splash-seen');
       if (alreadyShown) {
         setIsVisible(false);
-        onComplete && onComplete();
+        onComplete?.();
         return;
       }
     }
@@ -30,7 +30,7 @@ export function SplashScreen({ onComplete, forceShow = false }) {
         sessionStorage.setItem('mt-splash-seen', 'true');
       }
       setTimeout(() => {
-        onComplete && onComplete();
+        onComplete?.();
       }, 500); // Wait for exit animation
     }, 2800);
 
@@ -46,7 +46,7 @@ export function SplashScreen({ onComplete, forceShow = false }) {
       sessionStorage.setItem('mt-splash-seen', 'true');
     }
     setTimeout(() => {
-      onComplete && onComplete();
+      onComplete?.();
     }, 300);
   };
 

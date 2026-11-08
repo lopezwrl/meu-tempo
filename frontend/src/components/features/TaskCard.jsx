@@ -12,7 +12,6 @@ import {
   Calendar,
   FileText,
   MoreVertical,
-  RotateCcw,
   FastForward,
   Edit2,
   Trash2,
@@ -46,12 +45,6 @@ const PRIORITY_COLORS = {
   nenhuma: 'border-l-primary-border',
 };
 
-const PRIORITY_LABELS = {
-  alta: 'Alta',
-  media: 'Média',
-  baixa: 'Baixa',
-};
-
 export function TaskCard({
   task,
   categories = [],
@@ -77,11 +70,11 @@ export function TaskCard({
   const handleToggleComplete = (e) => {
     if (isCompletedState) {
       setIsCompletedState(false);
-      onReopen && onReopen(task.id);
+      onReopen?.(task.id);
     } else {
       setIsCompletedState(true);
       firePinkConfetti(e);
-      onComplete && onComplete(task.id);
+      onComplete?.(task.id);
     }
   };
 
@@ -91,7 +84,7 @@ export function TaskCard({
       if (!isCompletedState) {
         setIsCompletedState(true);
         firePinkConfetti({ clientX: eventData.event.clientX, clientY: eventData.event.clientY });
-        onComplete && onComplete(task.id);
+        onComplete?.(task.id);
       }
     },
     trackMouse: false,
