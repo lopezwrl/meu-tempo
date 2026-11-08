@@ -21,7 +21,7 @@ else:
     sys.path.insert(0, BASE)
 os.chdir(BASE)
 
-HOST, PORT = "127.0.0.1", 5000
+HOST, PORT = "127.0.0.1", 5001
 URL = f"http://{HOST}:{PORT}/"
 INSTANCE = os.path.join(BASE, "instance")
 os.makedirs(INSTANCE, exist_ok=True)
@@ -42,7 +42,7 @@ def servidor_ativo():
 def vite_ativo():
     with socket.socket() as s:
         s.settimeout(0.3)
-        return s.connect_ex(("127.0.0.1", 5173)) == 0
+        return s.connect_ex(("127.0.0.1", 3000)) == 0
 
 
 def iniciar_servidor():
@@ -73,7 +73,7 @@ def main():
                 break
             time.sleep(0.1)
 
-    target_url = "http://127.0.0.1:5173/" if vite_ativo() else URL
+    target_url = "http://127.0.0.1:3000/" if vite_ativo() else URL
     navegador = achar_navegador()
     if not navegador:
         webbrowser.open(target_url)
