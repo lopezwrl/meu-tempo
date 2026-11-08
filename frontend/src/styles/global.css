@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: var(--color-primary-border);
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-border);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-light);
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-primary-border);
+}
+
+[data-theme="dark"] .glass-panel {
+  background: rgba(31, 15, 24, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-primary-border);
+}
+
+/* TipTap Editor Styles */
+.tiptap {
+  outline: none;
+  min-height: 250px;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--color-text-3);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.tiptap h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.35rem;
+  color: var(--color-text);
+}
+
+.tiptap ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.tiptap ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.tiptap blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 0.75rem;
+  font-style: italic;
+  color: var(--color-text-2);
+}
+
+.tiptap code {
+  background: var(--color-surface-2);
+  color: var(--color-primary);
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.35rem;
+  font-size: 0.875rem;
+}
+
+.tiptap pre {
+  background: var(--color-surface-2);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+/* Print styling */
+@media print {
+  nav, .dock-container, .topbar, button:not(.print-include), .particle-canvas {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+

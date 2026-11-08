@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Projetos · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Organização</p>
+    <h1 class="page-title">Projetos</h1>
+  </div>
+  <button class="btn btn-primary" id="openNewProject">{{ icons.icon('plus') }} Novo projeto</button>
+</header>
+
+<section class="project-grid">
+  {% for project, stats in projects_with_stats %}
+  <a class="project-card" href="{{ url_for('projects.project_detail_page', project_id=project.id) }}" style="--project-color: {{ project.color }}">
+    <div class="project-card-top">
+      <span class="project-card-name">{{ project.name }}</span>
+      {% if stats.risk and stats.risk.level == 'risco' %}<span class="badge badge-danger">Risco de atraso</span>
+      {% elif stats.risk and stats.risk.level == 'atrasado' %}<span class="badge badge-danger">Atrasado</span>
+      {% endif %}
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: {{ stats.progress_percent }}%"></div></div>
+    <div class="project-card-meta">
+      <span>{{ stats.progress_percent }}% concluído</span>
+      <span>{{ stats.done_tasks }}/{{ stats.total_tasks }} tarefas</span>
+    </div>
+    <div class="project-card-meta">
+      {% if stats.estimated_minutes %}<span>{{ icons.icon('target', 12) }} {{ stats.estimated_minutes|hm }}</span>{% endif %}
+      <span>{{ icons.icon('clock', 12) }} {{ stats.worked_minutes|hm }} trabalhado</span>
+      {% if project.deadline %}<span>{{ icons.icon('calendar', 12) }} {{ project.deadline.strftime('%d/%m') }}</span>{% endif %}
+    </div>
+  </a>
+  {% else %}
+  <div class="empty-state">
+    <p>Nenhum projeto criado ainda.</p>
+    <button class="btn btn-ghost" id="emptyStateNewProject">Criar o primeiro projeto</button>
+  </div>
+  {% endfor %}
+</section>
+
+{% include "partials/project_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/projects.js') }}"></script>
+{% endblock %}

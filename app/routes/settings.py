@@ -109,3 +109,46 @@ def api_set_idle():
     user.idle_minutes = minutes
     db.session.commit()
     return jsonify({"idle_minutes": minutes})
+
+
+@settings_bp.route("/api/user", methods=["GET"])
+def api_get_user():
+    from app.models.user import User
+    user = db.session.get(User, CURRENT_USER_ID)
+    if not user:
+        return jsonify({"name": "Você", "theme": "light", "idle_minutes": 10, "onboarded": True})
+    return jsonify({
+        "id": user.id,
+        "name": user.name,
+        "theme": user.theme,
+        "idle_minutes": user.idle_minutes,
+        "workday_start": user.workday_start,
+        "workday_end": user.workday_end,
+        "onboarded": user.onboarded,
+    })
+
+
+@settings_bp.route("/api/user", methods=["PUT"])
+def api_update_user():
+    from app.models.user import User
+    user = db.session.get(User, CURRENT_USER_ID)
+    if not user:
+        return jsonify({"error": "Usuário não encontrado"}), 404
+    data = request.get_json(force=True)
+    if "name" in data and data["name"].strip():
+        user.name = data["name"].strip()[:120]
+    if "theme" in data:
+        user.theme = data["theme"]
+    if "idle_minutes" in data:
+        user.idle_minutes = int(data["idle_minutes"])
+    db.session.commit()
+    return jsonify({
+        "id": user.id,
+        "name": user.name,
+        "theme": user.theme,
+        "idle_minutes": user.idle_minutes,
+        "workday_start": user.workday_start,
+        "workday_end": user.workday_end,
+        "onboarded": user.onboarded,
+    })
+

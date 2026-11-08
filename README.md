@@ -47,7 +47,39 @@ A interface foi pensada para funcionar como um dashboard pessoal leve, com visua
 - pip
 - ambiente virtual recomendado
 
+## Arquitetura & Stack Técnica
+
+- **Backend:** Flask 3.0 REST API (SQLite + SQLAlchemy, Flask-CORS)
+- **Frontend:** React 18 + Vite
+- **Estilização:** Tailwind CSS v3 + CSS Custom Properties (tema rosa bebê & vinho escuro)
+- **Animações:** Framer Motion (transições de abas direcionais, layout springs, cards)
+- **Estado Global:** Zustand (timerStore, themeStore, userStore)
+- **Dados & Cache:** TanStack Query v5 com persistência offline em LocalStorage
+- **Gráficos:** Recharts integrados às variáveis CSS de tema
+- **Editor:** TipTap com suporte Markdown e autosave
+- **Ícones:** Lucide React
+
 ## Como rodar localmente
+
+### 1. Iniciar o Backend (Flask)
+
+```bash
+pip install -r requirements.txt
+python run.py
+```
+O backend ficará ativo em `http://127.0.0.1:5000`.
+
+### 2. Iniciar o Frontend (React + Vite)
+
+Em outro terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+O frontend abrirá em `http://localhost:5173` e fará proxy automático das chamadas `/api/*` para o Flask na porta 5000.
+
 
 ### 1) Clonar e entrar no projeto
 

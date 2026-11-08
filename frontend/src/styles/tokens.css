@@ -1,0 +1,40 @@
+:root {
+  --color-primary:        #EC4899;
+  --color-primary-light:  #F472B6;
+  --color-primary-soft:   #FFF0F5;
+  --color-primary-border: rgba(236, 72, 153, 0.2);
+  --color-bg:             #FFF8FB;
+  --color-surface:        #FFFFFF;
+  --color-surface-2:      #FFF0F5;
+  --color-text:           #1a0a10;
+  --color-text-2:         #6b2d4a;
+  --color-text-3:         #a06080;
+}
+
+[data-theme="dark"] {
+  --color-primary:        #F472B6;
+  --color-primary-soft:   rgba(244, 114, 182, 0.12);
+  --color-primary-border: rgba(244, 114, 182, 0.2);
+  --color-bg:             #130810;    /* vinho escuro */
+  --color-surface:        #1f0f18;
+  --color-surface-2:      #2a1020;
+  --color-text:           #ffe0ef;
+  --color-text-2:         #d490b8;
+  --color-text-3:         #8a5570;
+}
+
+/* Transição de 300ms suave entre temas */
+body, #root, .theme-transition {
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
+}
+
+/* Regra de acessibilidade obrigatória */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Histórico · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Análise de tempo</p>
+    <h1 class="page-title">Histórico</h1>
+  </div>
+  <div class="page-actions no-print">
+    <a class="btn btn-ghost" href="/api/export/report.xlsx">{{ icons.icon('download', 16) }} Excel</a>
+    <button class="btn btn-ghost" type="button" onclick="window.print()" title="Na janela de impressão, escolha 'Salvar como PDF'">{{ icons.icon('printer', 16) }} Imprimir / PDF</button>
+  </div>
+</header>
+
+<section class="stat-grid">
+  <div class="stat-card">
+    <span class="stat-label">Hoje trabalhado</span>
+    <span class="stat-value">{{ daily.worked_minutes|hm }}</span>
+    <span class="stat-sub">{{ daily.session_count }} {{ 'sessões' if daily.session_count != 1 else 'sessão' }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Esta semana</span>
+    <span class="stat-value">{{ weekly.worked_minutes|hm }}</span>
+    <span class="stat-sub">planejado {{ weekly.planned_minutes|hm }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Precisão das estimativas</span>
+    <span class="stat-value">{{ (weekly.precision_percent ~ '%') if weekly.precision_percent is not none else '—' }}</span>
+    <span class="stat-sub">nesta semana</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Concluídas na semana</span>
+    <span class="stat-value">{{ weekly.completed_tasks }}</span>
+    <span class="stat-sub">{{ weekly.projects_touched }} projeto{{ 's' if weekly.projects_touched != 1 }}</span>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-header"><h2>Resumo executivo da semana</h2></div>
+  <div class="exec-summary-grid">
+    <div class="exec-stat"><span class="exec-stat-label">Criadas</span><span class="exec-stat-value">{{ week_summary.created }}</span></div>
+    <div class="exec-stat"><span class="exec-stat-label">Concluídas</span><span class="exec-stat-value">{{ week_summary.completed }}</span></div>
+    <div class="exec-stat"><span class="exec-stat-label">Atrasadas</span><span class="exec-stat-value">{{ week_summary.overdue }}</span></div>
+    <div class="exec-stat"><span class="exec-stat-label">Canceladas</span><span class="exec-stat-value">{{ week_summary.cancelled }}</span></div>
+    <div class="exec-stat"><span class="exec-stat-label">Planejado x realizado</span><span class="exec-stat-value">{{ week_summary.planned_minutes|hm }} / {{ week_summary.worked_minutes|hm }}</span></div>
+    <div class="exec-stat"><span class="exec-stat-label">Precisão</span><span class="exec-stat-value">{{ (week_summary.precision_percent ~ '%') if week_summary.precision_percent is not none else '—' }}</span></div>
+    <div class="exec-stat"><span class="exec-stat-label">Maior projeto</span><span class="exec-stat-value" style="font-size:15px;">{{ week_summary.top_project or '—' }}</span></div>
+    <div class="exec-stat"><span class="exec-stat-label">Categoria que mais consumiu tempo</span><span class="exec-stat-value" style="font-size:15px;">{{ week_summary.top_category or '—' }}</span></div>
+  </div>
+</section>
+
+<section class="panel" id="conquistas">
+  <div class="panel-header"><h2>Conquistas</h2></div>
+  {% if achievements.achieved %}
+  <div class="achievements-grid">
+    {% for a in achievements.achieved %}
+    <div class="achievement-card">{{ icons.icon('flag', 20) }} <span class="achievement-card-title">{{ a.title }}</span></div>
+    {% endfor %}
+    {% for n in achievements.next_up %}
+    <div class="achievement-card-next">
+      <span>Próxima: {{ n.label }}</span>
+      <div class="progress-bar"><div class="progress-fill" style="width: {{ (n.progress / n.target * 100) if n.target else 0 }}%"></div></div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="empty-hint">Continue usando o sistema — suas primeiras conquistas aparecem aqui conforme você completa tarefas e organiza seus dias.</p>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <div class="panel-header"><h2>Horas trabalhadas nos últimos 30 dias</h2></div>
+  <div class="chart-card"><canvas id="chartHoursPerDay" height="90"></canvas></div>
+</section>
+
+<div class="chart-grid">
+  <section class="panel">
+    <div class="panel-header"><h2>Tempo por categoria</h2></div>
+    {% if by_category %}
+    <div class="chart-card"><canvas id="chartHoursByCategory"></canvas></div>
+    {% else %}
+    <p class="empty-hint">Ainda sem tempo registrado.</p>
+    {% endif %}
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2>Tempo por projeto</h2></div>
+    {% if by_project %}
+    <div class="chart-card"><canvas id="chartHoursByProject"></canvas></div>
+    {% else %}
+    <p class="empty-hint">Nenhum projeto com tempo registrado ainda.</p>
+    {% endif %}
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-header"><h2>Estimado x real por categoria</h2></div>
+  {% if est_vs_real_category %}
+  <div class="chart-card"><canvas id="chartEstVsReal" height="100"></canvas></div>
+  <p class="chart-message">Barras mais altas em "real" indicam categorias onde você costuma subestimar o tempo necessário.</p>
+  {% else %}
+  <p class="empty-hint">Conclua tarefas com estimativa e tempo real registrados para ver esta comparação.</p>
+  {% endif %}
+</section>
+
+<div class="chart-grid chart-grid--thirds">
+  <section class="panel">
+    <div class="panel-header"><h2>Concluídas x atrasadas</h2></div>
+    <div class="chart-card"><canvas id="chartTasksPerWeek" height="140"></canvas></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2>Precisão ao longo do tempo</h2></div>
+    <div class="chart-card"><canvas id="chartPrecisionTrend" height="140"></canvas></div>
+    <p class="chart-message">{{ precision_message }}</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2>Produtividade por horário</h2></div>
+    <div class="chart-card"><canvas id="chartProductivity" height="140"></canvas></div>
+    <p class="chart-message">{{ productivity.peak_message }}</p>
+    {% if productivity.precision_message %}<p class="chart-message">{{ productivity.precision_message }}</p>{% endif %}
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-header"><h2>Sessões registradas</h2></div>
+  {% if entries %}
+  <table class="history-table">
+    <thead>
+      <tr><th>Data</th><th>Tarefa</th><th>Projeto</th><th>Categoria</th><th>Início</th><th>Fim</th><th>Tempo</th></tr>
+    </thead>
+    <tbody>
+      {% for e in entries %}
+      <tr>
+        <td>{{ e.date }}</td>
+        <td>{{ e.task_name }}</td>
+        <td>{{ e.project_name or '—' }}</td>
+        <td>{{ e.category_name or '—' }}</td>
+        <td>{{ e.start }}</td>
+        <td>{{ e.end or '—' }}</td>
+        <td>{{ e.duration_minutes|hm }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-hint">Nenhuma sessão de trabalho registrada ainda. Use o cronômetro em uma tarefa para começar a construir seu histórico.</p>
+  {% endif %}
+</section>
+
+<script type="application/json" id="chartsData">
+{
+  "hours_per_day": {{ hours_per_day|tojson }},
+  "by_category": {{ by_category|tojson }},
+  "by_project": {{ by_project|tojson }},
+  "est_vs_real_category": {{ est_vs_real_category|tojson }},
+  "tasks_per_week": {{ tasks_per_week|tojson }},
+  "precision_trend": {{ precision_trend|tojson }},
+  "productivity": {{ productivity|tojson }}
+}
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}

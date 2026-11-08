@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as icons %}
+{% block title %}Calendário · Meu Tempo{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div>
+    <p class="eyebrow">
+      <a class="link" href="{{ url_for('planning.calendar_page', year=prev_year, month=prev_month) }}">{{ icons.icon('chevron-left', 13) }}</a>
+      Calendário
+      <a class="link" href="{{ url_for('planning.calendar_page', year=next_year, month=next_month) }}">{{ icons.icon('chevron-right', 13) }}</a>
+    </p>
+    <h1 class="page-title">{{ month_name }} de {{ year }}</h1>
+  </div>
+</header>
+
+<section class="panel">
+  <div class="calendar-grid">
+    <div class="calendar-head">Seg</div><div class="calendar-head">Ter</div><div class="calendar-head">Qua</div>
+    <div class="calendar-head">Qui</div><div class="calendar-head">Sex</div><div class="calendar-head">Sáb</div><div class="calendar-head">Dom</div>
+
+    {% for week in weeks %}
+      {% for day_num in week %}
+        {% if day_num %}
+          {% set day_date = "%04d-%02d-%02d"|format(year, month, day_num) %}
+          {% set day_tasks = tasks_by_day.get(day_num, []) %}
+          <div class="calendar-cell {{ 'is-today' if year == today.year and month == today.month and day_num == today.day }}"
+               data-calendar-day="{{ day_date }}">
+            <div class="calendar-cell-top">
+              <span class="calendar-day-num">{{ day_num }}</span>
+              <a class="link" href="{{ url_for('planning.myday_page', date=day_date) }}" title="Ver dia">{{ icons.icon('calendar-days', 14) }}</a>
+            </div>
+            {% if day_tasks %}
+            <div class="calendar-tasks">
+              {% for t in day_tasks[:3] %}
+              <span class="calendar-task-dot priority-{{ t.priority }}">{{ t.name }}</span>
+              {% endfor %}
+              {% if day_tasks|length > 3 %}<span class="calendar-more">+{{ day_tasks|length - 3 }}</span>{% endif %}
+            </div>
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="calendar-cell is-empty"></div>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </div>
+</section>
+
+{% include "partials/task_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+{% endblock %}

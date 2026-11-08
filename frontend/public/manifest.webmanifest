@@ -1,0 +1,19 @@
+{
+  "name": "Meu Tempo",
+  "short_name": "Meu Tempo",
+  "description": "Notas, tarefas e controle real do seu tempo com estética refinada.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFF8FB",
+  "theme_color": "#EC4899",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
+

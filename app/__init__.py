@@ -2,6 +2,7 @@ import os
 import secrets
 import sys
 from flask import Flask
+from flask_cors import CORS
 from app.models.db import db
 
 
@@ -35,6 +36,8 @@ def create_app(test_config=None):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     if test_config:
         app.config.update(test_config)
+
+    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
     db.init_app(app)
 
