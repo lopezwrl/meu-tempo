@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api, queryKeys } from './services/api';
 import { useUserStore } from './stores/userStore';
 import { ParticleBackground } from './components/layout/ParticleBackground';
+import { SplashScreen } from './components/layout/SplashScreen';
 import { Sidebar } from './components/layout/Sidebar';
 import { Dock } from './components/layout/Dock';
 import { TopBar } from './components/layout/TopBar';
@@ -55,7 +56,21 @@ const pageVariants = {
 export function App() {
   const location = useLocation();
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [showSplash, setShowSplash] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('mt-splash-seen');
+    }
+    return true;
+  });
   const setUser = useUserStore((s) => s.setUser);
+
+  useEffect(() => {
+    const handleReplay = () => {
+      setShowSplash(true);
+    };
+    window.addEventListener('mt-replay-splash', handleReplay);
+    return () => window.removeEventListener('mt-replay-splash', handleReplay);
+  }, []);
 
   // Sync user profile on mount
   useQuery({
@@ -143,6 +158,14 @@ export function App() {
           {/* Mobile Bottom Dock (hidden on desktop) */}
           <Dock />
         </div>
+
+        {/* Entrance Splash Animation */}
+        {showSplash && (
+          <SplashScreen
+            forceShow={true}
+            onComplete={() => setShowSplash(false)}
+          />
+        )}
 
         {/* Global Modals */}
         <CompletionModal />

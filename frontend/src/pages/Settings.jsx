@@ -19,6 +19,7 @@ import {
   Plus,
   Check,
   User,
+  Sparkles,
 } from 'lucide-react';
 
 const WEEKDAYS = [
@@ -224,6 +225,21 @@ export function Settings() {
               <span className="text-[10px] text-text-3 font-normal">Adapta-se ao seu SO</span>
             </div>
           </button>
+        </div>
+
+        <div className="pt-3 border-t border-primary-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 className="text-xs font-semibold text-text">Animação de Entrada</h3>
+            <p className="text-[11px] text-text-3">Ícone do Meu Tempo com rotação de ponteiros e morphing de texto</p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => window.dispatchEvent(new CustomEvent('mt-replay-splash'))}
+          >
+            <Sparkles className="w-3.5 h-3.5 mr-1 text-primary" />
+            <span>Ver animação de abertura</span>
+          </Button>
         </div>
       </section>
 
