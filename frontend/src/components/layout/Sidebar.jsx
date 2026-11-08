@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { DOCK_ITEMS } from './Dock';
 import { useThemeStore } from '../../stores/themeStore';
-import { Moon, Sun, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { Moon, Sun, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -19,8 +19,14 @@ export function Sidebar() {
       {/* Brand Header */}
       <div className="flex items-center justify-between px-5 h-20 border-b border-primary-border/40">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 text-white flex items-center justify-center shrink-0 shadow-md shadow-pink-500/20">
-            <Sparkles className="w-5 h-5" />
+          <div className="w-10 h-10 shrink-0 drop-shadow-sm">
+            <svg viewBox="0 0 64 64" className="w-full h-full">
+              <rect width="64" height="64" rx="16" className="fill-surface-2" stroke="rgba(236,72,153,0.3)" strokeWidth="1.5" />
+              <rect x="8" y="8" width="48" height="48" rx="13" fill="#EC4899" />
+              <circle cx="32" cy="32" r="16" fill="none" stroke="#FFFFFF" strokeWidth="3.2" strokeLinecap="round" />
+              <path d="M32 32V21M32 32l9 5" stroke="#FFFFFF" strokeWidth="3.2" strokeLinecap="round" />
+              <circle cx="32" cy="32" r="3" fill="#FFF0F5" />
+            </svg>
           </div>
           {!collapsed && (
             <motion.div

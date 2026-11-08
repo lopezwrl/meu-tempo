@@ -16,5 +16,8 @@ class Notebook(db.Model):
 
     notes = db.relationship("Note", backref="notebook", lazy=True)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def to_dict(self):
         return {"id": self.id, "name": self.name, "color": self.color, "position": self.position}

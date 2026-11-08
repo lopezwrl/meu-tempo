@@ -29,3 +29,6 @@ class User(db.Model):
     tasks = db.relationship("Task", backref="user", lazy=True, cascade="all, delete-orphan")
     notes = db.relationship("Note", backref="user", lazy=True, cascade="all, delete-orphan")
     categories = db.relationship("Category", backref="user", lazy=True, cascade="all, delete-orphan")
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)

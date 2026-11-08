@@ -14,6 +14,9 @@ class FixedCommitment(db.Model):
     end_time = db.Column(db.String(5), nullable=False)
     recurring = db.Column(db.Boolean, nullable=False, default=True)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def occurs_on(self, date):
         if self.recurring:
             return self.weekday == date.weekday()

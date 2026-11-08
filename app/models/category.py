@@ -12,6 +12,9 @@ class Category(db.Model):
 
     tasks = db.relationship("Task", backref="category", lazy=True)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def to_dict(self):
         return {
             "id": self.id,

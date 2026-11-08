@@ -99,13 +99,19 @@ def api_delete_commitment(commitment_id):
 @settings_bp.route("/api/settings/idle", methods=["POST", "PUT"])
 def api_set_idle():
     from app.models.user import User
+    body = request.get_json(silent=True)
+    raw_minutes = body.get("minutes") if isinstance(body, dict) else None
+    if raw_minutes is None:
+        return jsonify({"error": "Informe um número de minutos."}), 400
     try:
-        minutes = int((request.get_json(silent=True) or {}).get("minutes"))
+        minutes = int(raw_minutes)
     except (TypeError, ValueError):
         return jsonify({"error": "Informe um número de minutos."}), 400
     if not 0 <= minutes <= 240:
         return jsonify({"error": "Use um valor entre 0 (desligado) e 240."}), 400
     user = db.session.get(User, CURRENT_USER_ID)
+    if not user:
+        return jsonify({"error": "Usuário não encontrado."}), 404
     user.idle_minutes = minutes
     db.session.commit()
     return jsonify({"idle_minutes": minutes})

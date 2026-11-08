@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { audio } from '../../utils/audio';
 
 const MORPH_WORDS = ['Meu Tempo', 'Organize', 'Foque', 'Acompanhe'];
 
@@ -23,6 +24,11 @@ export function SplashScreen({ onComplete, forceShow = false }) {
       setWordIndex((prev) => (prev + 1) % MORPH_WORDS.length);
     }, 700);
 
+    // Play soft chime when clock hands snap in
+    const chimeTimer = setTimeout(() => {
+      audio.playChime();
+    }, 750);
+
     // Auto dismiss splash after sequence
     const dismissTimer = setTimeout(() => {
       setIsVisible(false);
@@ -36,6 +42,7 @@ export function SplashScreen({ onComplete, forceShow = false }) {
 
     return () => {
       clearInterval(wordInterval);
+      clearTimeout(chimeTimer);
       clearTimeout(dismissTimer);
     };
   }, [forceShow, onComplete]);
@@ -64,67 +71,136 @@ export function SplashScreen({ onComplete, forceShow = false }) {
           {/* Subtle Ambient Radial Glow */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: [1, 1.25, 1], opacity: [0.35, 0.6, 0.35] }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            className="absolute w-80 h-80 rounded-full bg-gradient-to-tr from-pink-400/25 to-primary/20 blur-3xl pointer-events-none"
+            animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.65, 0.3] }}
+            transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
+            className="absolute w-96 h-96 rounded-full bg-gradient-to-tr from-pink-400/30 to-primary/25 blur-3xl pointer-events-none"
           />
 
-          {/* Animated SVG Clock Mark */}
+          {/* Animated Official Meu Tempo Icon Badge */}
           <div className="relative z-10 flex flex-col items-center">
             <motion.div
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center drop-shadow-[0_8px_24px_rgba(236,72,153,0.25)]"
+              initial={{ scale: 0.75, opacity: 0, rotate: -6 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+              className="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center filter drop-shadow-[0_16px_36px_rgba(236,72,153,0.35)]"
             >
+              {/* Outer soft card container */}
               <svg
                 viewBox="0 0 64 64"
-                fill="none"
-                className="w-full h-full text-primary"
-                stroke="currentColor"
-                strokeWidth="3.5"
-                strokeLinecap="round"
+                className="w-full h-full"
               >
-                {/* Outer Clock Ring with stroke drawing */}
+                <defs>
+                  <linearGradient id="mtPinkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#EC4899" />
+                    <stop offset="50%" stopColor="#F472B6" />
+                    <stop offset="100%" stopColor="#FB7185" />
+                  </linearGradient>
+                  <linearGradient id="mtOuterBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="rgba(244,114,182,0.6)" />
+                    <stop offset="100%" stopColor="rgba(236,72,153,0.2)" />
+                  </linearGradient>
+                  <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+
+                {/* Outer Glassmorphic Squircle */}
+                <motion.rect
+                  width="64"
+                  height="64"
+                  rx="16"
+                  className="fill-surface/80"
+                  stroke="url(#mtOuterBorder)"
+                  strokeWidth="1.5"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                />
+
+                {/* Inner Vibrant Pink Squircle Badge */}
+                <motion.rect
+                  x="8"
+                  y="8"
+                  width="48"
+                  height="48"
+                  rx="13"
+                  fill="url(#mtPinkGradient)"
+                  initial={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.15, type: 'spring', stiffness: 300, damping: 22 }}
+                  style={{ transformOrigin: '32px 32px' }}
+                />
+
+                {/* Clock Face Circle - Strokes in smoothly */}
                 <motion.circle
                   cx="32"
                   cy="32"
-                  r="28"
+                  r="16"
+                  fill="none"
+                  stroke="#FFFFFF"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
                   initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 1.1, ease: [0.25, 1, 0.5, 1] }}
+                  animate={{ pathLength: 1, opacity: 0.95 }}
+                  transition={{ delay: 0.35, duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
                 />
 
-                {/* Clock Hour Hand (rotating to 12) */}
+                {/* Clock Hour Hand (V22) */}
                 <motion.path
-                  d="M32 32V17"
+                  d="M32 32V21"
+                  stroke="#FFFFFF"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
                   style={{ transformOrigin: '32px 32px' }}
-                  initial={{ rotate: -90, opacity: 0 }}
+                  initial={{ rotate: -120, opacity: 0 }}
                   animate={{ rotate: 0, opacity: 1 }}
-                  transition={{ delay: 0.75, duration: 0.65, type: 'spring', stiffness: 220, damping: 18 }}
+                  transition={{ delay: 0.7, duration: 0.65, type: 'spring', stiffness: 240, damping: 18 }}
                 />
 
-                {/* Clock Minute Hand (rotating to 2:15) */}
+                {/* Clock Minute Hand (32,32 -> 41,37) */}
                 <motion.path
-                  d="M32 32L43 39"
+                  d="M32 32L41 37"
+                  stroke="#FFFFFF"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
                   style={{ transformOrigin: '32px 32px' }}
-                  initial={{ rotate: -270, opacity: 0 }}
+                  initial={{ rotate: -240, opacity: 0 }}
                   animate={{ rotate: 0, opacity: 1 }}
-                  transition={{ delay: 0.85, duration: 0.75, type: 'spring', stiffness: 200, damping: 16 }}
+                  transition={{ delay: 0.85, duration: 0.75, type: 'spring', stiffness: 220, damping: 16 }}
                 />
 
                 {/* Center Pivot Dot */}
                 <motion.circle
                   cx="32"
                   cy="32"
-                  r="3.5"
-                  className="fill-primary"
-                  stroke="none"
+                  r="3.2"
+                  fill="#FFF0F5"
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.95, duration: 0.4, type: 'spring', stiffness: 350, damping: 20 }}
+                  transition={{ delay: 0.95, duration: 0.35, type: 'spring', stiffness: 400, damping: 18 }}
                 />
               </svg>
+
+              {/* Twinkling 4-point Sparkle Star 1 */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: [0, 1.2, 1], opacity: [0, 1, 0.85] }}
+                transition={{ delay: 1.1, duration: 0.6, ease: 'easeOut' }}
+                className="absolute -top-1.5 -right-1.5 text-primary text-xl select-none pointer-events-none drop-shadow-md"
+              >
+                ✨
+              </motion.div>
+
+              {/* Twinkling 4-point Sparkle Star 2 */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: [0, 1.1, 0.9], opacity: [0, 0.8, 0.6] }}
+                transition={{ delay: 1.3, duration: 0.6, ease: 'easeOut' }}
+                className="absolute -bottom-1 -left-1 text-pink-400 text-sm select-none pointer-events-none"
+              >
+                🌸
+              </motion.div>
             </motion.div>
 
             {/* Morphing Word Mark */}

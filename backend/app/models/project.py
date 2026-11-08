@@ -18,3 +18,6 @@ class Project(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     tasks = db.relationship("Task", backref="project", lazy=True)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)

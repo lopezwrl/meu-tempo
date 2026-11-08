@@ -19,6 +19,9 @@ class Schedule(db.Model):
 
     __table_args__ = (db.UniqueConstraint("user_id", "weekday", name="uq_schedule_user_weekday"),)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     @property
     def weekday_label(self):
         return WEEKDAY_LABELS[self.weekday]

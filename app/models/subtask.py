@@ -12,5 +12,8 @@ class Subtask(db.Model):
     position = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def to_dict(self):
         return {"id": self.id, "task_id": self.task_id, "title": self.title, "done": bool(self.done)}

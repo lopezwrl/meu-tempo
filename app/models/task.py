@@ -51,6 +51,9 @@ class Task(db.Model):
         cascade="all, delete-orphan", order_by="TimeEntry.start_time",
     )
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     @property
     def subtasks_total(self):
         return len(self.subtasks)
