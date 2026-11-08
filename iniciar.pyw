@@ -39,6 +39,12 @@ def servidor_ativo():
         return s.connect_ex((HOST, PORT)) == 0
 
 
+def vite_ativo():
+    with socket.socket() as s:
+        s.settimeout(0.3)
+        return s.connect_ex(("127.0.0.1", 5173)) == 0
+
+
 def iniciar_servidor():
     from app import create_app
     create_app().run(host=HOST, port=PORT, debug=False, use_reloader=False, threaded=True)
@@ -67,9 +73,10 @@ def main():
                 break
             time.sleep(0.1)
 
+    target_url = "http://127.0.0.1:5173/" if vite_ativo() else URL
     navegador = achar_navegador()
     if not navegador:
-        webbrowser.open(URL)
+        webbrowser.open(target_url)
         if subiu_agora:  # sem janela própria para vigiar: mantém o servidor vivo
             while True:
                 time.sleep(3600)
@@ -78,7 +85,7 @@ def main():
     # Perfil próprio: a janela é um processo separado, então sabemos quando foi fechada.
     perfil = os.path.join(INSTANCE, "perfil-janela")
     janela = subprocess.Popen([
-        navegador, f"--app={URL}", f"--user-data-dir={perfil}",
+        navegador, f"--app={target_url}", f"--user-data-dir={perfil}",
         "--window-size=1280,820", "--no-first-run", "--no-default-browser-check",
     ])
     if subiu_agora:

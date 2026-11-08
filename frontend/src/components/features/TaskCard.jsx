@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSwipeable } from 'react-swipeable';
 import confetti from 'canvas-confetti';
+import { soundEffects } from '../../utils/audio';
 import { SubtaskAccordion } from './SubtaskAccordion';
 import { useTimer } from '../../hooks/useTimer';
 import {
@@ -74,6 +75,7 @@ export function TaskCard({
     } else {
       setIsCompletedState(true);
       firePinkConfetti(e);
+      soundEffects.playTaskCompleted();
       onComplete?.(task.id);
     }
   };
@@ -84,6 +86,7 @@ export function TaskCard({
       if (!isCompletedState) {
         setIsCompletedState(true);
         firePinkConfetti({ clientX: eventData.event.clientX, clientY: eventData.event.clientY });
+        soundEffects.playTaskCompleted();
         onComplete?.(task.id);
       }
     },

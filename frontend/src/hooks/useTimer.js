@@ -2,6 +2,8 @@ import { useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, queryKeys } from '../services/api';
 import { useTimerStore } from '../stores/timerStore';
+import confetti from 'canvas-confetti';
+import { soundEffects } from '../utils/audio';
 
 export function useTimer() {
   const queryClient = useQueryClient();
@@ -69,6 +71,13 @@ export function useTimer() {
     onSuccess: () => {
       setActiveTask(null);
       closeCompletionModal();
+      soundEffects.playTimerBell();
+      confetti({
+        particleCount: 45,
+        spread: 70,
+        origin: { y: 0.6, x: 0.5 },
+        colors: ['#EC4899', '#F472B6', '#FFF0F5', '#c084fc', '#fb7185'],
+      });
       queryClient.invalidateQueries({ queryKey: queryKeys.tasks });
       queryClient.invalidateQueries({ queryKey: queryKeys.activeTimer });
       queryClient.invalidateQueries({ queryKey: queryKeys.timeSummary });
