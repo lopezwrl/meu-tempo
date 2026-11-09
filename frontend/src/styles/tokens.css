@@ -1,26 +1,28 @@
 :root {
-  --color-primary:        #EC4899;
-  --color-primary-light:  #F472B6;
-  --color-primary-soft:   #FFF0F5;
-  --color-primary-border: rgba(236, 72, 153, 0.2);
-  --color-bg:             #FFF8FB;
+  --color-primary:        #D63B6A;  /* Rosa framboesa refinado do novo favicon */
+  --color-primary-light:  #E85280;
+  --color-primary-soft:   #FDF2F5;  /* Base pastel suave correspondente */
+  --color-primary-border: rgba(214, 59, 106, 0.22);
+  --color-bg:             #FFF9FB;
   --color-surface:        #FFFFFF;
-  --color-surface-2:      #FFF0F5;
-  --color-text:           #1a0a10;
-  --color-text-2:         #6b2d4a;
-  --color-text-3:         #a06080;
+  --color-surface-2:      #FDF1F4;
+  --color-text:           #1e0a13;
+  --color-text-2:         #6d273f;
+  --color-text-3:         #9e506b;
+  --color-accent-pastel:  #F9C6D0;  /* Rosa bebê do fundo do favicon */
 }
 
 [data-theme="dark"] {
-  --color-primary:        #F472B6;
-  --color-primary-soft:   rgba(244, 114, 182, 0.12);
-  --color-primary-border: rgba(244, 114, 182, 0.2);
-  --color-bg:             #130810;    /* vinho escuro */
-  --color-surface:        #1f0f18;
-  --color-surface-2:      #2a1020;
-  --color-text:           #ffe0ef;
-  --color-text-2:         #d490b8;
-  --color-text-3:         #8a5570;
+  --color-primary:        #F07297;  /* Rosa luminoso no modo escuro */
+  --color-primary-soft:   rgba(240, 114, 151, 0.12);
+  --color-primary-border: rgba(240, 114, 151, 0.25);
+  --color-bg:             #15080e;  /* Vinho escuro profundo e elegante */
+  --color-surface:        #210e17;
+  --color-surface-2:      #2d1320;
+  --color-text:           #ffe3ed;
+  --color-text-2:         #dba0b5;
+  --color-text-3:         #965d72;
+  --color-accent-pastel:  #4a1c2d;
 }
 
 /* Transição de 300ms suave entre temas */

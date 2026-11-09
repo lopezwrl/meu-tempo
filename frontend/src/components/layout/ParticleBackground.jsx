@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useThemeStore } from '../../stores/themeStore';
 
-const COLORS = ['#F472B6', '#EC4899', '#c084fc'];
+const COLORS = ['#D63B6A', '#F07297', '#F9C6D0', '#F0A0B5', '#e879a9'];
 
 export const ParticleBackground = React.memo(function ParticleBackground() {
   const canvasRef = useRef(null);

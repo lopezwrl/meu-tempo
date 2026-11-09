@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#FCE4ED"/><rect x="10" y="10" width="44" height="44" rx="12" fill="#D9648F"/><circle cx="32" cy="32" r="15.5" fill="none" stroke="#FFF7FA" stroke-width="3.5"/><path d="M32 32V22M32 32l8 5" stroke="#FFF7FA" stroke-width="3.5" stroke-linecap="round"/><circle cx="32" cy="32" r="2.8" fill="#FFEAF3"/></svg>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="128" fill="#F9C6D0"/>
+  <rect x="128" y="144" width="64" height="64" rx="16" fill="#D63B6A"/>
+  <rect x="224" y="160" width="176" height="32" rx="16" fill="#D63B6A" opacity="0.5"/>
+  <rect x="128" y="240" width="64" height="64" rx="16" fill="#D63B6A"/>
+  <rect x="224" y="256" width="136" height="32" rx="16" fill="#D63B6A" opacity="0.5"/>
+  <polyline points="136,176 152,200 192,160" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="136,272 152,296 192,256" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="128" y="336" width="64" height="64" rx="16" fill="#F0A0B5" opacity="0.6"/>
+  <rect x="224" y="352" width="104" height="32" rx="16" fill="#D63B6A" opacity="0.3"/>
+</svg>

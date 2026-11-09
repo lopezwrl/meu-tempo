@@ -1,12 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <defs>
-    <linearGradient id="pinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#EC4899"/>
-      <stop offset="100%" stop-color="#F472B6"/>
-    </linearGradient>
-  </defs>
-  <rect width="32" height="32" rx="8" fill="url(#pinkGrad)"/>
-  <circle cx="16" cy="16" r="10" stroke="#FFF" stroke-width="2" fill="none"/>
-  <path d="M16 10v6l4 2" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="128" fill="#F9C6D0"/>
+  <rect x="128" y="144" width="64" height="64" rx="16" fill="#D63B6A"/>
+  <rect x="224" y="160" width="176" height="32" rx="16" fill="#D63B6A" opacity="0.5"/>
+  <rect x="128" y="240" width="64" height="64" rx="16" fill="#D63B6A"/>
+  <rect x="224" y="256" width="136" height="32" rx="16" fill="#D63B6A" opacity="0.5"/>
+  <polyline points="136,176 152,200 192,160" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="136,272 152,296 192,256" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="128" y="336" width="64" height="64" rx="16" fill="#F0A0B5" opacity="0.6"/>
+  <rect x="224" y="352" width="104" height="32" rx="16" fill="#D63B6A" opacity="0.3"/>
 </svg>
-

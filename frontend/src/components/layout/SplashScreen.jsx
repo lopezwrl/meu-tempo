@@ -1,12 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { audio } from '../../utils/audio';
+import { Sparkles, ArrowRight } from 'lucide-react';
 
-const MORPH_WORDS = ['Meu Tempo', 'Organize', 'Foque', 'Acompanhe'];
+const SUBTITLES = [
+  { icon: '🌸', text: 'Planejamento com leveza' },
+  { icon: '⚡', text: 'Foco sem ansiedade' },
+  { icon: '🌿', text: 'Seu ritmo, suas regras' },
+  { icon: '✨', text: 'Tudo pronto para você' },
+];
 
 export function SplashScreen({ onComplete, forceShow = false }) {
-  const [wordIndex, setWordIndex] = useState(0);
+  const [stage, setStage] = useState(0); // 0: enter, 1: check1, 2: check2, 3: ready
+  const [subtitleIndex, setSubtitleIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+
+  // 3D Tilt on mouse move
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 120, damping: 15 });
+  const springY = useSpring(mouseY, { stiffness: 120, damping: 15 });
+  const rotateX = useTransform(springY, [-200, 200], [8, -8]);
+  const rotateY = useTransform(springX, [-200, 200], [-8, 8]);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    mouseX.set(e.clientX - centerX);
+    mouseY.set(e.clientY - centerY);
+  };
 
   useEffect(() => {
     // If not forced and already shown in this session, skip immediately
@@ -19,42 +42,49 @@ export function SplashScreen({ onComplete, forceShow = false }) {
       }
     }
 
-    // Cycle morph words smoothly
-    const wordInterval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % MORPH_WORDS.length);
-    }, 700);
+    // Choreographed entrance timeline
+    const t0 = setTimeout(() => {
+      setStage(1);
+      audio.playCheckTick(1);
+    }, 450);
 
-    // Play soft chime when clock hands snap in
-    const chimeTimer = setTimeout(() => {
-      audio.playChime();
+    const t1 = setTimeout(() => {
+      setStage(2);
+      audio.playCheckTick(1.25);
+    }, 900);
+
+    const t2 = setTimeout(() => {
+      setStage(3);
+      audio.playWarmChord();
+    }, 1350);
+
+    // Rotate subtitle messages
+    const subInterval = setInterval(() => {
+      setSubtitleIndex((prev) => (prev + 1) % SUBTITLES.length);
     }, 750);
 
-    // Auto dismiss splash after sequence
+    // Auto dismiss splash
     const dismissTimer = setTimeout(() => {
-      setIsVisible(false);
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('mt-splash-seen', 'true');
-      }
-      setTimeout(() => {
-        onComplete?.();
-      }, 500); // Wait for exit animation
-    }, 2800);
+      handleExit();
+    }, 3200);
 
     return () => {
-      clearInterval(wordInterval);
-      clearTimeout(chimeTimer);
+      clearTimeout(t0);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearInterval(subInterval);
       clearTimeout(dismissTimer);
     };
   }, [forceShow, onComplete]);
 
-  const handleSkip = () => {
+  const handleExit = () => {
     setIsVisible(false);
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('mt-splash-seen', 'true');
     }
     setTimeout(() => {
       onComplete?.();
-    }, 300);
+    }, 450);
   };
 
   return (
@@ -62,186 +92,254 @@ export function SplashScreen({ onComplete, forceShow = false }) {
       {isVisible && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.04 }}
+          exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          onClick={handleSkip}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-bg cursor-pointer select-none overflow-hidden"
-          title="Clique para pular"
+          onMouseMove={handleMouseMove}
+          onClick={handleExit}
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-bg select-none overflow-hidden cursor-pointer"
+          style={{ perspective: 1200 }}
         >
-          {/* Subtle Ambient Radial Glow */}
+          {/* Ambient Multi-Layer Glow */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.65, 0.3] }}
-            transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
-            className="absolute w-96 h-96 rounded-full bg-gradient-to-tr from-pink-400/30 to-primary/25 blur-3xl pointer-events-none"
+            animate={{ scale: [1, 1.25, 1], opacity: [0.35, 0.65, 0.35] }}
+            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+            className="absolute w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-[#F9C6D0]/50 via-[#D63B6A]/30 to-[#F0A0B5]/40 blur-3xl pointer-events-none"
           />
 
-          {/* Animated Official Meu Tempo Icon Badge */}
-          <div className="relative z-10 flex flex-col items-center">
-            <motion.div
-              initial={{ scale: 0.75, opacity: 0, rotate: -6 }}
-              animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-              className="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center filter drop-shadow-[0_16px_36px_rgba(236,72,153,0.35)]"
-            >
-              {/* Outer soft card container */}
-              <svg
-                viewBox="0 0 64 64"
-                className="w-full h-full"
-              >
-                <defs>
-                  <linearGradient id="mtPinkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#EC4899" />
-                    <stop offset="50%" stopColor="#F472B6" />
-                    <stop offset="100%" stopColor="#FB7185" />
-                  </linearGradient>
-                  <linearGradient id="mtOuterBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(244,114,182,0.6)" />
-                    <stop offset="100%" stopColor="rgba(236,72,153,0.2)" />
-                  </linearGradient>
-                  <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                  </filter>
-                </defs>
+          {/* Floating Stardust Particles */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {[...Array(12)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{
+                  x: Math.random() * window.innerWidth,
+                  y: Math.random() * window.innerHeight,
+                  opacity: 0,
+                  scale: 0.5,
+                }}
+                animate={{
+                  y: [null, '-=60'],
+                  opacity: [0, 0.6, 0],
+                  scale: [0.5, 1, 0.5],
+                }}
+                transition={{
+                  duration: 2.5 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                  ease: 'easeInOut',
+                }}
+                className="absolute w-2 h-2 rounded-full bg-[#D63B6A]/30 blur-[1px]"
+              />
+            ))}
+          </div>
 
-                {/* Outer Glassmorphic Squircle */}
+          {/* Interactive 3D Favicon Emblem Card */}
+          <motion.div
+            style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+            className="relative z-10 flex flex-col items-center"
+          >
+            {/* Outer Aura Ring */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{
+                scale: stage >= 3 ? [1, 1.06, 1] : 1,
+                opacity: stage >= 3 ? [0.6, 0.9, 0.6] : 0.4,
+              }}
+              transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+              className="absolute -inset-4 rounded-[42px] bg-gradient-to-tr from-[#D63B6A]/20 via-[#F9C6D0]/40 to-[#F0A0B5]/20 blur-xl pointer-events-none"
+            />
+
+            {/* The Animated SVG Icon Card */}
+            <motion.div
+              initial={{ scale: 0.7, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+              className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-[36px] bg-white dark:bg-[#240D17] shadow-[0_20px_50px_rgba(214,59,106,0.28)] p-2.5 border border-[#D63B6A]/15 backdrop-blur-xl"
+            >
+              <svg
+                viewBox="0 0 512 512"
+                className="w-full h-full drop-shadow-sm"
+              >
+                {/* Background Squircle */}
+                <rect width="512" height="512" rx="128" fill="#F9C6D0" />
+
+                {/* ROW 1: First Task */}
                 <motion.rect
+                  x="128"
+                  y="144"
                   width="64"
                   height="64"
                   rx="16"
-                  className="fill-surface/80"
-                  stroke="url(#mtOuterBorder)"
-                  strokeWidth="1.5"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                />
-
-                {/* Inner Vibrant Pink Squircle Badge */}
-                <motion.rect
-                  x="8"
-                  y="8"
-                  width="48"
-                  height="48"
-                  rx="13"
-                  fill="url(#mtPinkGradient)"
-                  initial={{ scale: 0.85, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.15, type: 'spring', stiffness: 300, damping: 22 }}
-                  style={{ transformOrigin: '32px 32px' }}
-                />
-
-                {/* Clock Face Circle - Strokes in smoothly */}
-                <motion.circle
-                  cx="32"
-                  cy="32"
-                  r="16"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 0.95 }}
-                  transition={{ delay: 0.35, duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
-                />
-
-                {/* Clock Hour Hand (V22) */}
-                <motion.path
-                  d="M32 32V21"
-                  stroke="#FFFFFF"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                  style={{ transformOrigin: '32px 32px' }}
-                  initial={{ rotate: -120, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  transition={{ delay: 0.7, duration: 0.65, type: 'spring', stiffness: 240, damping: 18 }}
-                />
-
-                {/* Clock Minute Hand (32,32 -> 41,37) */}
-                <motion.path
-                  d="M32 32L41 37"
-                  stroke="#FFFFFF"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                  style={{ transformOrigin: '32px 32px' }}
-                  initial={{ rotate: -240, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  transition={{ delay: 0.85, duration: 0.75, type: 'spring', stiffness: 220, damping: 16 }}
-                />
-
-                {/* Center Pivot Dot */}
-                <motion.circle
-                  cx="32"
-                  cy="32"
-                  r="3.2"
-                  fill="#FFF0F5"
+                  fill="#D63B6A"
                   initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.95, duration: 0.35, type: 'spring', stiffness: 400, damping: 18 }}
+                  animate={{ scale: stage >= 1 ? 1 : 0, opacity: stage >= 1 ? 1 : 0 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 20 }}
+                  style={{ transformOrigin: '160px 176px' }}
+                />
+                <motion.polyline
+                  points="136,176 152,200 192,160"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="16"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: stage >= 1 ? 1 : 0, opacity: stage >= 1 ? 1 : 0 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                />
+                <motion.rect
+                  x="224"
+                  y="160"
+                  width="176"
+                  height="32"
+                  rx="16"
+                  fill="#D63B6A"
+                  opacity="0.5"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: stage >= 1 ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  style={{ transformOrigin: '224px 176px' }}
+                />
+
+                {/* ROW 2: Second Task */}
+                <motion.rect
+                  x="128"
+                  y="240"
+                  width="64"
+                  height="64"
+                  rx="16"
+                  fill="#D63B6A"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: stage >= 2 ? 1 : 0, opacity: stage >= 2 ? 1 : 0 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 20 }}
+                  style={{ transformOrigin: '160px 272px' }}
+                />
+                <motion.polyline
+                  points="136,272 152,296 192,256"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="16"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: stage >= 2 ? 1 : 0, opacity: stage >= 2 ? 1 : 0 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                />
+                <motion.rect
+                  x="224"
+                  y="256"
+                  width="136"
+                  height="32"
+                  rx="16"
+                  fill="#D63B6A"
+                  opacity="0.5"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: stage >= 2 ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  style={{ transformOrigin: '224px 272px' }}
+                />
+
+                {/* ROW 3: Pending Task with Active Pulsing Aura */}
+                <motion.rect
+                  x="128"
+                  y="336"
+                  width="64"
+                  height="64"
+                  rx="16"
+                  fill="#F0A0B5"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{
+                    scale: stage >= 3 ? [1, 1.06, 1] : 0,
+                    opacity: stage >= 3 ? [0.65, 0.95, 0.65] : 0,
+                  }}
+                  transition={{
+                    scale: { repeat: Infinity, duration: 1.8, ease: 'easeInOut' },
+                    opacity: { repeat: Infinity, duration: 1.8, ease: 'easeInOut' },
+                  }}
+                  style={{ transformOrigin: '160px 368px' }}
+                />
+                <motion.rect
+                  x="224"
+                  y="352"
+                  width="104"
+                  height="32"
+                  rx="16"
+                  fill="#D63B6A"
+                  opacity="0.3"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: stage >= 3 ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  style={{ transformOrigin: '224px 368px' }}
                 />
               </svg>
 
-              {/* Twinkling 4-point Sparkle Star 1 */}
+              {/* Twinkling Accent Stars */}
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: [0, 1.2, 1], opacity: [0, 1, 0.85] }}
-                transition={{ delay: 1.1, duration: 0.6, ease: 'easeOut' }}
-                className="absolute -top-1.5 -right-1.5 text-primary text-xl select-none pointer-events-none drop-shadow-md"
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: [1, 1.25, 1], rotate: [0, 15, 0] }}
+                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                className="absolute -top-2.5 -right-2.5 text-primary text-2xl select-none pointer-events-none drop-shadow-md"
               >
                 ✨
               </motion.div>
-
-              {/* Twinkling 4-point Sparkle Star 2 */}
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: [0, 1.1, 0.9], opacity: [0, 0.8, 0.6] }}
-                transition={{ delay: 1.3, duration: 0.6, ease: 'easeOut' }}
-                className="absolute -bottom-1 -left-1 text-pink-400 text-sm select-none pointer-events-none"
-              >
-                🌸
-              </motion.div>
             </motion.div>
 
-            {/* Morphing Word Mark */}
-            <div className="mt-6 h-10 flex items-center justify-center">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={wordIndex}
-                  initial={{ opacity: 0, y: 14, filter: 'blur(8px)', scale: 0.92 }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-                  exit={{ opacity: 0, y: -14, filter: 'blur(8px)', scale: 1.05 }}
-                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-2xl sm:text-3xl font-extrabold tracking-tight text-primary whitespace-nowrap"
-                >
-                  {MORPH_WORDS[wordIndex]}
-                </motion.span>
-              </AnimatePresence>
-            </div>
-
-            {/* Subtle Tagline */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.6 }}
-              transition={{ delay: 1.2, duration: 0.8 }}
-              className="text-xs text-text-3 font-medium tracking-widest uppercase mt-2"
+            {/* Typography: Brand Title with Gradient Glow */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.6 }}
+              className="mt-6 flex flex-col items-center"
             >
-              Controle real do seu tempo
-            </motion.p>
-          </div>
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-[#D63B6A] via-[#E85280] to-[#F07297] bg-clip-text text-transparent drop-shadow-sm">
+                Meu Tempo
+              </h1>
 
-          {/* Skip hint */}
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
-            transition={{ delay: 1.8, duration: 0.5 }}
-            className="absolute bottom-8 text-[11px] text-text-3 font-mono"
-          >
-            toque para entrar
-          </motion.span>
+              {/* Dynamic Kinetic Subtitle Pill */}
+              <div className="mt-3 h-8 flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={subtitleIndex}
+                    initial={{ opacity: 0, y: 8, filter: 'blur(4px)', scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+                    exit={{ opacity: 0, y: -8, filter: 'blur(4px)', scale: 1.04 }}
+                    transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface/90 border border-primary/20 text-text-2 text-xs font-semibold shadow-sm backdrop-blur-md"
+                  >
+                    <span>{SUBTITLES[subtitleIndex].icon}</span>
+                    <span>{SUBTITLES[subtitleIndex].text}</span>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </motion.div>
+
+            {/* Interactive "Entrar no Meu Tempo" button pill */}
+            <motion.button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleExit();
+              }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.5 }}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className="mt-8 flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-white text-xs font-bold shadow-lg shadow-[#D63B6A]/25 hover:shadow-xl hover:shadow-[#D63B6A]/35 transition-all group"
+            >
+              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+              <span>Entrar no Meu Tempo</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+          </motion.div>
+
+          {/* Quick Skip hint */}
+          <span className="absolute bottom-6 text-[11px] text-text-3 font-mono opacity-50">
+            toque em qualquer lugar para pular
+          </span>
         </motion.div>
       )}
     </AnimatePresence>
   );
 }
-

@@ -19,13 +19,17 @@ export function Sidebar() {
       {/* Brand Header */}
       <div className="flex items-center justify-between px-5 h-20 border-b border-primary-border/40">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 shrink-0 drop-shadow-sm">
-            <svg viewBox="0 0 64 64" className="w-full h-full">
-              <rect width="64" height="64" rx="16" className="fill-surface-2" stroke="rgba(236,72,153,0.3)" strokeWidth="1.5" />
-              <rect x="8" y="8" width="48" height="48" rx="13" fill="#EC4899" />
-              <circle cx="32" cy="32" r="16" fill="none" stroke="#FFFFFF" strokeWidth="3.2" strokeLinecap="round" />
-              <path d="M32 32V21M32 32l9 5" stroke="#FFFFFF" strokeWidth="3.2" strokeLinecap="round" />
-              <circle cx="32" cy="32" r="3" fill="#FFF0F5" />
+          <div className="w-10 h-10 shrink-0 drop-shadow-sm rounded-2xl overflow-hidden shadow-[0_4px_12px_rgba(214,59,106,0.18)]">
+            <svg viewBox="0 0 512 512" className="w-full h-full">
+              <rect width="512" height="512" rx="128" fill="#F9C6D0" />
+              <rect x="128" y="144" width="64" height="64" rx="16" fill="#D63B6A" />
+              <rect x="224" y="160" width="176" height="32" rx="16" fill="#D63B6A" opacity="0.5" />
+              <polyline points="136,176 152,200 192,160" fill="none" stroke="white" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
+              <rect x="128" y="240" width="64" height="64" rx="16" fill="#D63B6A" />
+              <rect x="224" y="256" width="136" height="32" rx="16" fill="#D63B6A" opacity="0.5" />
+              <polyline points="136,272 152,296 192,256" fill="none" stroke="white" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
+              <rect x="128" y="336" width="64" height="64" rx="16" fill="#F0A0B5" opacity="0.7" />
+              <rect x="224" y="352" width="104" height="32" rx="16" fill="#D63B6A" opacity="0.3" />
             </svg>
           </div>
           {!collapsed && (
