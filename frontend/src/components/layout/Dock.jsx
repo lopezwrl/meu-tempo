@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, CheckSquare, BookOpen, BarChart3, Settings } from 'lucide-react';
@@ -28,32 +28,65 @@ export function Dock() {
     })
   );
 
-  // Mandatory solution: calculate indicator position via getBoundingClientRect() of activeEl & dock container
-  useEffect(() => {
-    const updateIndicator = () => {
-      const activeEl = itemRefs.current[activeIndex];
-      const container = dockRef.current;
-      if (!activeEl || !container) return;
+  // Measure active item position & width accurately at every stage of label expansion
+  const updateIndicator = useCallback(() => {
+    const activeEl = itemRefs.current[activeIndex];
+    const container = dockRef.current;
+    if (!activeEl || !container) return;
 
-      const { left, width } = activeEl.getBoundingClientRect();
-      const containerLeft = container.getBoundingClientRect().left;
-      setIndicatorStyle({
-        left: left - containerLeft,
-        width,
+    const nextLeft = activeEl.offsetLeft;
+    const nextWidth = activeEl.offsetWidth;
+
+    setIndicatorStyle((prev) => {
+      if (
+        prev.ready &&
+        Math.abs(prev.left - nextLeft) < 0.5 &&
+        Math.abs(prev.width - nextWidth) < 0.5
+      ) {
+        return prev;
+      }
+      return {
+        left: nextLeft,
+        width: nextWidth,
         ready: true,
-      });
-    };
+      };
+    });
+  }, [activeIndex]);
 
+  useEffect(() => {
     updateIndicator();
-    // Re-check after layout has settled / fonts loaded
-    const timer = setTimeout(updateIndicator, 50);
+
+    // Observe size changes on all dock items & container so while the label
+    // animates from width: 0 -> auto (and previous label shrinks), the pill
+    // tracks the exact final dimensions without clipping "Mais" or any label.
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        updateIndicator();
+      });
+      if (dockRef.current) ro.observe(dockRef.current);
+      itemRefs.current.forEach((el) => {
+        if (el) ro.observe(el);
+      });
+    }
+
+    // Fallback multi-step checks across the 200ms label transition
+    const t1 = setTimeout(updateIndicator, 50);
+    const t2 = setTimeout(updateIndicator, 150);
+    const t3 = setTimeout(updateIndicator, 240);
+    const t4 = setTimeout(updateIndicator, 350);
+
     window.addEventListener('resize', updateIndicator);
 
     return () => {
-      clearTimeout(timer);
+      if (ro) ro.disconnect();
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
       window.removeEventListener('resize', updateIndicator);
     };
-  }, [activeIndex, location.pathname]);
+  }, [activeIndex, location.pathname, updateIndicator]);
 
   // Hide dock on scroll down, show on scroll up
   useEffect(() => {
@@ -81,12 +114,11 @@ export function Dock() {
           opacity: isVisible ? 1 : 0,
         }}
         transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-        className="dock-container pointer-events-auto relative flex items-center p-1.5 rounded-full bg-surface/90 backdrop-blur-xl border border-primary-border shadow-xl shadow-pink-500/10"
+        className="dock-container pointer-events-auto relative flex items-center gap-0.5 p-1.5 rounded-full bg-surface/90 backdrop-blur-xl border border-primary-border shadow-xl shadow-pink-500/10"
       >
-        {/* Sliding Indicator Pill using getBoundingClientRect relative coords & spring */}
+        {/* Sliding Indicator Pill */}
         {indicatorStyle.ready && (
           <motion.div
-            layoutId="dock-indicator"
             initial={false}
             animate={{
               x: indicatorStyle.left,
@@ -94,10 +126,10 @@ export function Dock() {
             }}
             transition={{
               type: 'spring',
-              stiffness: 400,
-              damping: 30,
+              stiffness: 420,
+              damping: 32,
             }}
-            className="absolute top-1.5 bottom-1.5 left-0 rounded-full bg-primary-soft border border-primary/25 z-0"
+            className="absolute top-1.5 bottom-1.5 left-0 rounded-full bg-primary-soft border border-primary/25 z-0 pointer-events-none"
           />
         )}
 
@@ -110,27 +142,30 @@ export function Dock() {
               key={item.path}
               to={item.path}
               ref={(el) => (itemRefs.current[index] = el)}
-              className={`relative z-10 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold select-none transition-colors duration-200 outline-none ${
+              className={`relative z-10 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold select-none transition-colors duration-200 outline-none ${
                 isActive ? 'text-primary' : 'text-text-3 hover:text-text-2'
               }`}
             >
               <motion.div
                 animate={{
-                  scale: isActive ? 1.15 : 1,
+                  scale: isActive ? 1.12 : 1,
                 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                className="shrink-0 flex items-center justify-center"
               >
                 <Icon className="w-5 h-5" />
               </motion.div>
 
-              <AnimatePresence>
+              <AnimatePresence initial={false}>
                 {isActive && (
                   <motion.span
                     initial={{ opacity: 0, width: 0 }}
                     animate={{ opacity: 1, width: 'auto' }}
                     exit={{ opacity: 0, width: 0 }}
                     transition={{ duration: 0.18, ease: 'easeOut' }}
-                    className="overflow-hidden whitespace-nowrap pl-0.5 text-primary"
+                    onUpdate={updateIndicator}
+                    onAnimationComplete={updateIndicator}
+                    className="overflow-hidden whitespace-nowrap pl-0.5 pr-1 text-primary inline-block"
                   >
                     {item.label}
                   </motion.span>
@@ -143,4 +178,3 @@ export function Dock() {
     </div>
   );
 }
-
