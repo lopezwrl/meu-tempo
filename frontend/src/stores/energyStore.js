@@ -78,3 +78,4 @@ export function getCircadianPhase(hour = new Date().getHours()) {
     badgeColor: 'text-[#D63B6A] bg-[#F9C6D0]/25 border-[#D63B6A]/25',
   };
 }
+

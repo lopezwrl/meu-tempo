@@ -127,3 +127,4 @@ export function EnergyBadge({ level = 'media', size = 'sm' }) {
     </span>
   );
 }
+
