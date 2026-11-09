@@ -1,5 +1,5 @@
 // Service worker do Meu Tempo: torna o app instalável e guarda os arquivos estáticos.
-const CACHE = "meu-tempo-v3";
+const CACHE = "meu-tempo-v5";
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => {
@@ -14,13 +14,20 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== location.origin || url.pathname.startsWith("/api/")) return;
 
+  // Icons & favicons: network first so updates appear immediately
+  if (url.pathname.includes("favicon") || url.pathname.includes("/icons/")) {
+    e.respondWith(
+      fetch(req).catch(() => caches.match(req))
+    );
+    return;
+  }
+
   if (url.pathname.startsWith("/static/")) {
-    // Estáticos: responde do cache e atualiza em segundo plano.
     e.respondWith(
       caches.open(CACHE).then(async (cache) => {
+        const fresh = fetch(req).then((res) => { if (res.ok) cache.put(req, res.clone()); return res; }).catch(() => null);
         const cached = await cache.match(req);
-        const fresh = fetch(req).then((res) => { if (res.ok) cache.put(req, res.clone()); return res; }).catch(() => cached);
-        return cached || fresh;
+        return (await fresh) || cached;
       })
     );
     return;

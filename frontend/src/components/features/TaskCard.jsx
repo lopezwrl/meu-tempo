@@ -5,6 +5,8 @@ import confetti from 'canvas-confetti';
 import { soundEffects } from '../../utils/audio';
 import { SubtaskAccordion } from './SubtaskAccordion';
 import { useTimer } from '../../hooks/useTimer';
+import { useEnergyStore } from '../../stores/energyStore';
+import { CategoryIcon, EnergyBadge } from '../ui/CategoryIcon';
 import {
   Check,
   Play,
@@ -31,7 +33,7 @@ function firePinkConfetti(event) {
     particleCount: 30,
     spread: 60,
     origin,
-    colors: ['#EC4899', '#F472B6', '#FFF0F5', '#c084fc', '#fb7185'],
+    colors: ['#D63B6A', '#F9C6D0', '#F0A0B5', '#E85280', '#FFFFFF'],
     ticks: 45, // 600ms duration
     gravity: 1.2,
     scalar: 0.8,
@@ -40,7 +42,7 @@ function firePinkConfetti(event) {
 }
 
 const PRIORITY_COLORS = {
-  alta: 'border-l-rose-500',
+  alta: 'border-l-[#D63B6A]',
   media: 'border-l-amber-500',
   baixa: 'border-l-sky-400',
   nenhuma: 'border-l-primary-border',
@@ -61,6 +63,8 @@ export function TaskCard({
   const [isCompletedState, setIsCompletedState] = useState(task.status === 'concluida');
   const [showMenu, setShowMenu] = useState(false);
   const { activeTask, isRunning, toggleTimer } = useTimer();
+  const getTaskEnergy = useEnergyStore((s) => s.getTaskEnergy);
+  const taskEnergy = getTaskEnergy(task);
 
   const isCurrentActive = activeTask?.id === task.id;
   const isCurrentlyRunning = isCurrentActive && isRunning;
@@ -163,9 +167,16 @@ export function TaskCard({
 
           {/* Metadata badges & chips */}
           <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+            {/* Circadian Energy Badge */}
+            <EnergyBadge level={taskEnergy} size="sm" />
+
             {category && (
               <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-2 text-text-2 border border-primary-border/40">
-                <span>{category.icon || '🏷️'}</span>
+                <CategoryIcon
+                  icon={category.icon}
+                  name={category.name}
+                  className="w-3 h-3 text-primary"
+                />
                 <span>{category.name}</span>
               </span>
             )}
@@ -280,4 +291,3 @@ export function TaskCard({
     </motion.div>
   );
 }
-

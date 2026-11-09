@@ -3,6 +3,8 @@ import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Input, Textarea } from '../ui/Input';
 import { api } from '../../services/api';
+import { useEnergyStore } from '../../stores/energyStore';
+import { ENERGY_LEVELS } from '../ui/CategoryIcon';
 import { Sparkles } from 'lucide-react';
 
 export function TaskModal({
@@ -19,10 +21,13 @@ export function TaskModal({
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [priority, setPriority] = useState('media');
+  const [energyLevel, setEnergyLevel] = useState('media');
   const [categoryId, setCategoryId] = useState('');
   const [projectId, setProjectId] = useState('');
   const [suggestion, setSuggestion] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  const { getTaskEnergy, setTaskEnergy } = useEnergyStore();
 
   useEffect(() => {
     if (taskToEdit) {
@@ -32,6 +37,7 @@ export function TaskModal({
       setDate(taskToEdit.date || '');
       setTime(taskToEdit.time || '');
       setPriority(taskToEdit.priority || 'media');
+      setEnergyLevel(getTaskEnergy(taskToEdit));
       setCategoryId(taskToEdit.category_id ? String(taskToEdit.category_id) : '');
       setProjectId(taskToEdit.project_id ? String(taskToEdit.project_id) : '');
     } else {
@@ -43,11 +49,12 @@ export function TaskModal({
       setDate(todayStr);
       setTime('');
       setPriority('media');
+      setEnergyLevel('media');
       setCategoryId('');
       setProjectId('');
     }
     setSuggestion(null);
-  }, [taskToEdit, isOpen]);
+  }, [taskToEdit, isOpen, getTaskEnergy]);
 
   // Debounced estimation fetch
   useEffect(() => {
@@ -78,7 +85,7 @@ export function TaskModal({
 
     setIsSaving(true);
     try {
-      await onSave({
+      const saved = await onSave({
         name: name.trim(),
         description: description.trim(),
         estimated_minutes: estimatedMinutes ? parseInt(estimatedMinutes, 10) : null,
@@ -88,6 +95,10 @@ export function TaskModal({
         category_id: categoryId ? parseInt(categoryId, 10) : null,
         project_id: projectId ? parseInt(projectId, 10) : null,
       });
+      const targetId = saved?.id || taskToEdit?.id;
+      if (targetId) {
+        setTaskEnergy(targetId, energyLevel);
+      }
       onClose();
     } finally {
       setIsSaving(false);
@@ -99,7 +110,7 @@ export function TaskModal({
       isOpen={isOpen}
       onClose={onClose}
       title={taskToEdit ? 'Editar Tarefa' : 'Nova Tarefa'}
-      description="Organize seus compromissos e planeje seu tempo"
+      description="Organize seus compromissos alinhados ao seu ritmo de energia"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
@@ -140,6 +151,34 @@ export function TaskModal({
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
         />
+
+        {/* Circadian Energy Tier Selector */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-text-2">
+            Ritmo de Energia Necessário (Bateria Humana)
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {ENERGY_LEVELS.map((tier) => {
+              const Icon = tier.icon;
+              const isSelected = energyLevel === tier.id;
+              return (
+                <button
+                  key={tier.id}
+                  type="button"
+                  onClick={() => setEnergyLevel(tier.id)}
+                  className={`flex flex-col items-center gap-1 p-2.5 rounded-xl border text-xs font-semibold transition-all ${
+                    isSelected
+                      ? 'bg-primary-soft border-primary text-primary shadow-sm shadow-[#D63B6A]/10'
+                      : 'bg-surface border-primary-border/60 text-text-3 hover:border-primary/40'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{tier.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
@@ -192,7 +231,7 @@ export function TaskModal({
               <option value="">Nenhuma categoria</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.icon || '🏷️'} {c.name}
+                  {c.name}
                 </option>
               ))}
             </select>
@@ -227,4 +266,3 @@ export function TaskModal({
     </Modal>
   );
 }
-

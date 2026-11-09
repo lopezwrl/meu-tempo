@@ -1,9 +1,10 @@
-const CACHE_NAME = 'meu-tempo-v1';
+const CACHE_NAME = 'meu-tempo-v5';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/favicon.svg',
-  '/manifest.webmanifest',
+  '/favicon.svg?v=5',
+  '/favicon-32x32.png?v=5',
+  '/manifest.webmanifest?v=5',
 ];
 
 self.addEventListener('install', (event) => {
@@ -34,6 +35,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Always network-first for favicons and manifest so icon updates are immediate
+  if (url.pathname.includes('favicon') || url.pathname.includes('icon') || url.pathname.includes('manifest')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -59,4 +68,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-

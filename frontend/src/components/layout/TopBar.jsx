@@ -2,7 +2,7 @@ import React from 'react';
 import { useUserStore } from '../../stores/userStore';
 import { useThemeStore } from '../../stores/themeStore';
 import { TimerPill } from './TimerPill';
-import { Search, Sun, Moon } from 'lucide-react';
+import { Search, Sun, Moon, Sparkles, Headphones, Wind } from 'lucide-react';
 
 export function TopBar({ onOpenCommandPalette }) {
   const user = useUserStore((s) => s.user);
@@ -34,9 +34,9 @@ export function TopBar({ onOpenCommandPalette }) {
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
         {/* Left Greeting & Date */}
         <div className="flex flex-col min-w-0">
-          <h1 className="text-lg sm:text-xl font-bold text-text tracking-tight truncate flex items-center gap-1.5">
+          <h1 className="text-lg sm:text-xl font-bold text-text tracking-tight truncate flex items-center gap-2">
             <span>{getGreeting()}, {userName}</span>
-            <span className="text-primary text-base">✨</span>
+            <Sparkles className="w-4 h-4 text-primary shrink-0 fill-primary/20" />
           </h1>
           <p className="text-xs text-text-3 font-medium capitalize mt-0.5">
             {displayDate}
@@ -47,6 +47,36 @@ export function TopBar({ onOpenCommandPalette }) {
         <div className="flex items-center gap-2">
           {/* Timer Pill */}
           <TimerPill />
+
+          {/* Focus Sanctuary Quick Button */}
+          <button
+            type="button"
+            onClick={() =>
+              window.dispatchEvent(
+                new CustomEvent('mt-open-sanctuary', { detail: 'sound' })
+              )
+            }
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-primary-border/60 text-text-2 hover:text-primary hover:border-primary text-xs font-semibold transition-all shadow-sm"
+            title="Santuário de Foco & Sons Offline"
+          >
+            <Headphones className="w-3.5 h-3.5 text-primary" />
+            <span className="hidden md:inline">Santuário</span>
+          </button>
+
+          {/* Box Breathing Quick Button */}
+          <button
+            type="button"
+            onClick={() =>
+              window.dispatchEvent(
+                new CustomEvent('mt-open-sanctuary', { detail: 'breath' })
+              )
+            }
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-primary-border/60 text-text-2 hover:text-primary hover:border-primary text-xs font-semibold transition-all shadow-sm"
+            title="Respiração Guiada 4-4-4-4"
+          >
+            <Wind className="w-3.5 h-3.5 text-primary" />
+            <span className="hidden md:inline">Respirar</span>
+          </button>
 
           {/* Search / Command palette button */}
           <button
@@ -80,4 +110,3 @@ export function TopBar({ onOpenCommandPalette }) {
     </header>
   );
 }
-

@@ -14,23 +14,35 @@
       document.documentElement.setAttribute("data-theme", t);
       document.documentElement.setAttribute("data-accent", a);
       if (sessionStorage.getItem("mt-splash")) document.documentElement.classList.add("no-splash");
+      if ("caches" in window) {
+        caches.keys().then(function (keys) {
+          keys.forEach(function (k) { if (k !== "meu-tempo-v5") caches.delete(k); });
+        });
+      }
     } catch (e) {}
   </script>
-  <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#D9648F">
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+  <link rel="manifest" href="/manifest.webmanifest?v=5">
+  <meta name="theme-color" content="#D63B6A">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='512' height='512' viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='512' height='512' rx='128' fill='%23F9C6D0'/%3E%3Crect x='128' y='144' width='64' height='64' rx='16' fill='%23D63B6A'/%3E%3Crect x='224' y='160' width='176' height='32' rx='16' fill='%23D63B6A' opacity='0.5'/%3E%3Crect x='128' y='240' width='64' height='64' rx='16' fill='%23D63B6A'/%3E%3Crect x='224' y='256' width='136' height='32' rx='16' fill='%23D63B6A' opacity='0.5'/%3E%3Cpolyline points='136,176 152,200 192,160' fill='none' stroke='white' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpolyline points='136,272 152,296 192,256' fill='none' stroke='white' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='128' y='336' width='64' height='64' rx='16' fill='%23F0A0B5' opacity='0.6'/%3E%3Crect x='224' y='352' width='104' height='32' rx='16' fill='%23D63B6A' opacity='0.3'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32x32.png') }}?v=5">
+  <link rel="shortcut icon" href="/favicon.ico?v=5">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}?v=5">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <canvas id="shader-bg" aria-hidden="true"></canvas>
   <div class="splash" id="splash" aria-hidden="true">
-    <svg class="splash-mark" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round">
-      <circle class="splash-ring" cx="32" cy="32" r="28"/>
-      <path class="splash-hand" d="M32 32V16"/>
-      <path class="splash-hand min" d="M32 32l11 7"/>
-      <circle class="splash-dot" cx="32" cy="32" r="3" stroke="none"/>
+    <svg class="splash-mark" viewBox="0 0 512 512" fill="none">
+      <rect width="512" height="512" rx="128" fill="#F9C6D0"/>
+      <rect x="128" y="144" width="64" height="64" rx="16" fill="#D63B6A"/>
+      <rect x="224" y="160" width="176" height="32" rx="16" fill="#D63B6A" opacity="0.5"/>
+      <polyline points="136,176 152,200 192,160" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="128" y="240" width="64" height="64" rx="16" fill="#D63B6A"/>
+      <rect x="224" y="256" width="136" height="32" rx="16" fill="#D63B6A" opacity="0.5"/>
+      <polyline points="136,272 152,296 192,256" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="128" y="336" width="64" height="64" rx="16" fill="#F0A0B5" opacity="0.7"/>
+      <rect x="224" y="352" width="104" height="32" rx="16" fill="#D63B6A" opacity="0.3"/>
     </svg>
     <p class="splash-name">
       <span class="text-morph" data-words="Meu Tempo, Organize, Foque, Acompanhe">Meu Tempo</span>

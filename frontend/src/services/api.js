@@ -89,7 +89,27 @@ export const api = {
   getProductivityByHour: async () => (await apiClient.get('/reports/productivity-by-hour')).data,
   getPrecisionTrend: async (weeks = 8) => (await apiClient.get('/reports/precision-trend', { params: { weeks } })).data,
   getWeekSummary: async (date) => (await apiClient.get('/reports/week-summary', { params: { date } })).data,
-  getAchievements: async () => (await apiClient.get('/achievements')).data,
+  getAchievements: async () => {
+    const raw = (await apiClient.get('/achievements')).data;
+    if (Array.isArray(raw)) return raw;
+    const achieved = (raw?.achieved || []).map((a, idx) => ({
+      id: `ach-${a.key}-${idx}`,
+      key: a.key,
+      title: a.title,
+      description: a.next_target
+        ? `Progresso atual: ${a.progress} • Próximo marco: ${a.next_target}`
+        : 'Marco desbloqueado com consistência',
+      unlocked: true,
+    }));
+    const nextUp = (raw?.next_up || []).map((n, idx) => ({
+      id: `next-${n.key}-${idx}`,
+      key: n.key,
+      title: n.label,
+      description: `Em progresso: ${n.progress} de ${n.target}`,
+      unlocked: false,
+    }));
+    return [...achieved, ...nextUp];
+  },
 
   // Planning
   getPlanningDay: async (date) => (await apiClient.get('/planning/day', { params: { date } })).data,

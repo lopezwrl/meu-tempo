@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { audio } from '../../utils/audio';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, Heart, Zap, Compass, CheckCircle2 } from 'lucide-react';
 
 const SUBTITLES = [
-  { icon: '🌸', text: 'Planejamento com leveza' },
-  { icon: '⚡', text: 'Foco sem ansiedade' },
-  { icon: '🌿', text: 'Seu ritmo, suas regras' },
-  { icon: '✨', text: 'Tudo pronto para você' },
+  { Icon: Heart, text: 'Planejamento com leveza' },
+  { Icon: Zap, text: 'Foco sem ansiedade' },
+  { Icon: Compass, text: 'Seu ritmo, suas regras' },
+  { Icon: CheckCircle2, text: 'Tudo pronto para você' },
 ];
 
 export function SplashScreen({ onComplete, forceShow = false }) {
@@ -86,6 +86,8 @@ export function SplashScreen({ onComplete, forceShow = false }) {
       onComplete?.();
     }, 450);
   };
+
+  const CurrentSubtitleIcon = SUBTITLES[subtitleIndex].Icon;
 
   return (
     <AnimatePresence>
@@ -274,14 +276,14 @@ export function SplashScreen({ onComplete, forceShow = false }) {
                 />
               </svg>
 
-              {/* Twinkling Accent Stars */}
+              {/* Twinkling SVG Accent Emblem */}
               <motion.div
                 initial={{ scale: 0, rotate: -30 }}
-                animate={{ scale: [1, 1.25, 1], rotate: [0, 15, 0] }}
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 15, 0] }}
                 transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                className="absolute -top-2.5 -right-2.5 text-primary text-2xl select-none pointer-events-none drop-shadow-md"
+                className="absolute -top-2.5 -right-2.5 w-8 h-8 rounded-full bg-surface border border-primary/25 shadow-md flex items-center justify-center text-primary select-none pointer-events-none"
               >
-                ✨
+                <Sparkles className="w-4 h-4 fill-primary/25" />
               </motion.div>
             </motion.div>
 
@@ -305,9 +307,9 @@ export function SplashScreen({ onComplete, forceShow = false }) {
                     animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
                     exit={{ opacity: 0, y: -8, filter: 'blur(4px)', scale: 1.04 }}
                     transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface/90 border border-primary/20 text-text-2 text-xs font-semibold shadow-sm backdrop-blur-md"
+                    className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-surface/90 border border-primary/20 text-text-2 text-xs font-semibold shadow-sm backdrop-blur-md"
                   >
-                    <span>{SUBTITLES[subtitleIndex].icon}</span>
+                    <CurrentSubtitleIcon className="w-3.5 h-3.5 text-primary shrink-0" />
                     <span>{SUBTITLES[subtitleIndex].text}</span>
                   </motion.div>
                 </AnimatePresence>

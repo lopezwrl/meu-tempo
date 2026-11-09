@@ -1,3 +1,4 @@
+import os
 from datetime import date
 from flask import Blueprint, render_template, jsonify, send_from_directory, current_app
 from app.models.db import db
@@ -79,23 +80,41 @@ def manifest():
         "start_url": "/",
         "scope": "/",
         "display": "standalone",
-        "background_color": "#FFF7FA",
-        "theme_color": "#D9648F",
+        "background_color": "#FFF5F7",
+        "theme_color": "#D63B6A",
         "lang": "pt-BR",
         "icons": [
-            {"src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
-            {"src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
-            {"src": "/static/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+            {"src": "/static/icons/favicon-192x192.png?v=5", "sizes": "192x192", "type": "image/png"},
+            {"src": "/static/icons/favicon-512x512.png?v=5", "sizes": "512x512", "type": "image/png"},
+            {"src": "/static/icons/favicon-512x512.png?v=5", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
         ],
         "shortcuts": [{"name": "Notas", "url": "/notas"}, {"name": "Meu dia", "url": "/meu-dia"}],
     })
     resp.headers["Content-Type"] = "application/manifest+json"
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    return resp
+
+
+@main_bp.route("/favicon.ico")
+def favicon_ico():
+    icons_dir = os.path.join(current_app.static_folder or "static", "icons")
+    resp = send_from_directory(icons_dir, "favicon.ico", mimetype="image/x-icon")
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    return resp
+
+
+@main_bp.route("/favicon.svg")
+def favicon_svg():
+    icons_dir = os.path.join(current_app.static_folder or "static", "icons")
+    resp = send_from_directory(icons_dir, "favicon.svg", mimetype="image/svg+xml")
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return resp
 
 
 @main_bp.route("/sw.js")
 def service_worker():
     # Precisa sair da raiz para controlar o site inteiro.
-    resp = send_from_directory(current_app.static_folder, "sw.js", mimetype="application/javascript")
-    resp.headers["Cache-Control"] = "no-cache"
+    static_dir = current_app.static_folder or "static"
+    resp = send_from_directory(static_dir, "sw.js", mimetype="application/javascript")
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return resp

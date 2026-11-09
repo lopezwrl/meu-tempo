@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api, queryKeys } from '../services/api';
 import { useTasks } from '../hooks/useTasks';
+import { useEnergyStore } from '../stores/energyStore';
 import { StatCard } from '../components/features/StatCard';
 import { TaskCard } from '../components/features/TaskCard';
 import { TaskModal } from '../components/features/TaskModal';
+import { WellbeingHub } from '../components/features/WellbeingHub';
+import { WindDownModal } from '../components/features/WindDownModal';
 import { NoteChip } from '../components/features/NoteChip';
 import { Sheet } from '../components/ui/Sheet';
 import { NoteEditor } from '../components/features/NoteEditor';
@@ -25,14 +28,18 @@ import {
   ArrowRight,
   AlertTriangle,
   Sparkles,
+  Moon,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export function Home() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isWindDownOpen, setIsWindDownOpen] = useState(false);
+  const [selectedEnergyFilter, setSelectedEnergyFilter] = useState(null);
   const [selectedTaskNote, setSelectedTaskNote] = useState(null);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const navigate = useNavigate();
+  const getTaskEnergy = useEnergyStore((s) => s.getTaskEnergy);
 
   const {
     tasks,
@@ -66,6 +73,10 @@ export function Home() {
 
   // Calculate today stats
   const todayTasks = tasks.filter((t) => t.date === todayStr);
+  const filteredTodayTasks = selectedEnergyFilter
+    ? todayTasks.filter((t) => getTaskEnergy(t) === selectedEnergyFilter)
+    : todayTasks;
+
   const completedToday = todayTasks.filter((t) => t.status === 'concluida');
   const workedTodayMinutes = timeSummary?.daily?.worked_minutes || 0;
   const workedTodayHours = (workedTodayMinutes / 60).toFixed(1);
@@ -81,7 +92,6 @@ export function Home() {
       : 100;
 
   const handleOpenNoteSheet = (task) => {
-    // Find note linked to this task or prompt to open notes
     const linkedNote = notes.find((n) => n.task_id === task.id);
     if (linkedNote) {
       setSelectedTaskNote(linkedNote);
@@ -115,6 +125,19 @@ export function Home() {
           </Link>
         </div>
       )}
+
+      {/* Differentiating Features: Circadian Rhythm, Anti-Burnout Meter & Sanctuary */}
+      <WellbeingHub
+        todayTasks={todayTasks}
+        availableMinutes={planningDay?.overload?.available_minutes || 360}
+        onPostponeTask={postponeTask}
+        onOpenSanctuary={(tab) =>
+          window.dispatchEvent(new CustomEvent('mt-open-sanctuary', { detail: tab }))
+        }
+        onOpenWindDown={() => setIsWindDownOpen(true)}
+        selectedEnergyFilter={selectedEnergyFilter}
+        onSelectEnergyFilter={setSelectedEnergyFilter}
+      />
 
       {/* Stats Cards Section */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -158,43 +181,73 @@ export function Home() {
               <h2 className="text-base font-bold text-text tracking-tight flex items-center gap-2">
                 <span>Meu Dia</span>
                 <span className="px-2 py-0.5 rounded-full bg-primary-soft text-primary text-xs font-semibold">
-                  {todayTasks.length}
+                  {filteredTodayTasks.length}
                 </span>
               </h2>
-              <p className="text-xs text-text-3 mt-0.5">Foco para hoje</p>
+              <p className="text-xs text-text-3 mt-0.5">
+                {selectedEnergyFilter
+                  ? 'Filtrado pelo seu ritmo de energia'
+                  : 'Foco planejado para hoje'}
+              </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setTaskToEdit(null);
-                setIsTaskModalOpen(true);
-              }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-light shadow-sm shadow-pink-500/20 transition-all active:scale-95"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Nova tarefa</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsWindDownOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-primary-border/60 text-text-2 hover:text-primary hover:border-primary text-xs font-semibold transition-all"
+                title="Ritual de Fechamento do Dia"
+              >
+                <Moon className="w-3.5 h-3.5 text-primary" />
+                <span className="hidden sm:inline">Encerrar Dia</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setTaskToEdit(null);
+                  setIsTaskModalOpen(true);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-light shadow-sm shadow-pink-500/20 transition-all active:scale-95"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Nova tarefa</span>
+              </button>
+            </div>
           </div>
 
           <div className="space-y-3">
-            {todayTasks.length === 0 ? (
+            {filteredTodayTasks.length === 0 ? (
               <div className="p-8 rounded-2xl bg-surface border border-primary-border/60 text-center">
                 <div className="w-10 h-10 rounded-2xl bg-primary-soft text-primary flex items-center justify-center mx-auto mb-3">
                   <Sparkles className="w-5 h-5" />
                 </div>
-                <h4 className="text-sm font-semibold text-text">Nenhuma tarefa agendada para hoje</h4>
-                <p className="text-xs text-text-3 mt-1">Que tal planejar algo produtivo ou relaxar?</p>
+                <h4 className="text-sm font-semibold text-text">
+                  {selectedEnergyFilter
+                    ? 'Nenhuma tarefa para este nível de energia hoje'
+                    : 'Nenhuma tarefa agendada para hoje'}
+                </h4>
+                <p className="text-xs text-text-3 mt-1">
+                  {selectedEnergyFilter
+                    ? 'Experimente alternar o filtro de energia ou criar uma nova tarefa.'
+                    : 'Que tal planejar algo produtivo ou relaxar?'}
+                </p>
                 <button
                   type="button"
-                  onClick={() => setIsTaskModalOpen(true)}
+                  onClick={() => {
+                    if (selectedEnergyFilter) {
+                      setSelectedEnergyFilter(null);
+                    } else {
+                      setIsTaskModalOpen(true);
+                    }
+                  }}
                   className="mt-4 px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-light transition-colors"
                 >
-                  Adicionar primeira tarefa
+                  {selectedEnergyFilter ? 'Mostrar todas de hoje' : 'Adicionar primeira tarefa'}
                 </button>
               </div>
             ) : (
-              todayTasks.map((task, idx) => (
+              filteredTodayTasks.map((task, idx) => (
                 <TaskCard
                   key={task.id}
                   task={task}
@@ -253,7 +306,7 @@ export function Home() {
                       borderRadius: '12px',
                       fontSize: '12px',
                       color: 'var(--color-text)',
-                      boxShadow: '0 4px 12px rgba(236,72,153,0.1)',
+                      boxShadow: '0 4px 12px rgba(214,59,106,0.12)',
                     }}
                     cursor={{ fill: 'var(--color-surface-2)', opacity: 0.5 }}
                     formatter={(val) => [`${val} horas`, 'Trabalhado']}
@@ -316,11 +369,20 @@ export function Home() {
         projects={projects}
         onSave={async (data) => {
           if (taskToEdit) {
-            await updateTask({ id: taskToEdit.id, data });
-          } else {
-            await createTask(data);
+            return await updateTask({ id: taskToEdit.id, data });
           }
+          return await createTask(data);
         }}
+      />
+
+      {/* Daily Wind-Down Ritual Modal */}
+      <WindDownModal
+        isOpen={isWindDownOpen}
+        onClose={() => setIsWindDownOpen(false)}
+        todayTasks={todayTasks}
+        workedTodayMinutes={workedTodayMinutes}
+        precisionRate={precisionRate}
+        onPostponeTask={postponeTask}
       />
 
       {/* Bottom Sheet for Linked Task Note */}
@@ -343,4 +405,3 @@ export function Home() {
     </div>
   );
 }
-

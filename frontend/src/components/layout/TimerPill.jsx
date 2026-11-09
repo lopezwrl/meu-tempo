@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTimer } from '../../hooks/useTimer';
-import { Play, Pause, Square } from 'lucide-react';
+import { Play, Pause, Square, Headphones } from 'lucide-react';
 
 export function TimerPill() {
   const {
@@ -100,6 +100,22 @@ export function TimerPill() {
             </span>
           </div>
 
+          {/* Ambient Soundscape shortcut on pill */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.dispatchEvent(
+                new CustomEvent('mt-open-sanctuary', { detail: 'sound' })
+              );
+            }}
+            title="Santuário Sonoro de Foco"
+            aria-label="Santuário Sonoro de Foco"
+            className="p-1 rounded-full text-text-3 hover:text-primary hover:bg-primary-soft transition-colors ml-0.5"
+          >
+            <Headphones className="w-3.5 h-3.5" />
+          </button>
+
           {/* Stop / Finish button on pill */}
           <button
             type="button"
@@ -109,7 +125,7 @@ export function TimerPill() {
             }}
             title="Finalizar tarefa"
             aria-label="Finalizar tarefa"
-            className="p-1 rounded-full text-text-3 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors ml-1"
+            className="p-1 rounded-full text-text-3 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
           >
             <Square className="w-3.5 h-3.5 fill-current" />
           </button>
@@ -118,4 +134,3 @@ export function TimerPill() {
     </AnimatePresence>
   );
 }
-

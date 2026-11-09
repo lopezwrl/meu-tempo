@@ -25,13 +25,13 @@ import {
 export function History() {
   const actualTheme = useThemeStore((s) => s.actualTheme);
 
-  // Dynamic theme colors for charts
+  // Dynamic theme colors for charts matching new favicon palette (#D63B6A & #F9C6D0)
   const isDark = actualTheme === 'dark';
-  const primaryColor = isDark ? '#F472B6' : '#EC4899';
-  const secondaryColor = isDark ? '#a06080' : '#F472B6';
-  const textColor = isDark ? '#d490b8' : '#6b2d4a';
-  const borderColor = isDark ? 'rgba(244,114,182,0.2)' : 'rgba(236,72,153,0.2)';
-  const surfaceColor = isDark ? '#1f0f18' : '#FFFFFF';
+  const primaryColor = isDark ? '#F07297' : '#D63B6A';
+  const secondaryColor = isDark ? '#F0A0B5' : '#E85280';
+  const textColor = isDark ? '#F9C6D0' : '#732642';
+  const borderColor = isDark ? 'rgba(249,198,208,0.2)' : 'rgba(214,59,106,0.2)';
+  const surfaceColor = isDark ? '#240D17' : '#FFFFFF';
 
   // Queries
   const { data: weekSummary } = useQuery({
@@ -254,7 +254,7 @@ export function History() {
                   }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
-                <Bar dataKey="estimado" name="Estimado (h)" fill={isDark ? '#8a5570' : '#fbcfe8'} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="estimado" name="Estimado (h)" fill={isDark ? '#8a5570' : '#F9C6D0'} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="real" name="Real (h)" fill={primaryColor} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

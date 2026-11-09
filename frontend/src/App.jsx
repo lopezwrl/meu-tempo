@@ -11,6 +11,7 @@ import { Dock } from './components/layout/Dock';
 import { TopBar } from './components/layout/TopBar';
 import { CompletionModal } from './components/features/CompletionModal';
 import { CommandPalette } from './components/features/CommandPalette';
+import { FocusSanctuaryModal } from './components/features/FocusSanctuaryModal';
 import { ToastProvider } from './components/ui/Toast';
 
 // Pages
@@ -56,6 +57,10 @@ const pageVariants = {
 export function App() {
   const location = useLocation();
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [sanctuaryState, setSanctuaryState] = useState({
+    isOpen: false,
+    tab: 'sound',
+  });
   const [showSplash, setShowSplash] = useState(() => {
     if (typeof window !== 'undefined') {
       return !sessionStorage.getItem('mt-splash-seen');
@@ -68,8 +73,18 @@ export function App() {
     const handleReplay = () => {
       setShowSplash(true);
     };
+    const handleOpenSanctuary = (e) => {
+      setSanctuaryState({
+        isOpen: true,
+        tab: e?.detail === 'breath' ? 'breath' : 'sound',
+      });
+    };
     window.addEventListener('mt-replay-splash', handleReplay);
-    return () => window.removeEventListener('mt-replay-splash', handleReplay);
+    window.addEventListener('mt-open-sanctuary', handleOpenSanctuary);
+    return () => {
+      window.removeEventListener('mt-replay-splash', handleReplay);
+      window.removeEventListener('mt-open-sanctuary', handleOpenSanctuary);
+    };
   }, []);
 
   // Sync user profile on mount
@@ -169,6 +184,11 @@ export function App() {
 
         {/* Global Modals */}
         <CompletionModal />
+        <FocusSanctuaryModal
+          isOpen={sanctuaryState.isOpen}
+          initialTab={sanctuaryState.tab}
+          onClose={() => setSanctuaryState((prev) => ({ ...prev, isOpen: false }))}
+        />
         <CommandPalette
           isOpen={isCommandPaletteOpen}
           onClose={() => setIsCommandPaletteOpen(false)}
@@ -179,4 +199,3 @@ export function App() {
     </ToastProvider>
   );
 }
-

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
+import { AchievementIcon } from '../ui/CategoryIcon';
 
 export function AchievementBadge({ achievement, index = 0 }) {
   const isUnlocked = achievement.unlocked;
@@ -18,14 +19,14 @@ export function AchievementBadge({ achievement, index = 0 }) {
       }`}
     >
       <div
-        className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 text-base ${
+        className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
           isUnlocked
-            ? 'bg-gradient-to-tr from-pink-500 to-rose-400 text-white shadow-md shadow-pink-500/20'
+            ? 'bg-gradient-to-tr from-[#D63B6A] to-[#F07297] text-white shadow-md shadow-[#D63B6A]/20'
             : 'bg-surface-2 text-text-3 border border-primary-border/40'
         }`}
       >
         {isUnlocked ? (
-          <span>{achievement.icon || '🏆'}</span>
+          <AchievementIcon achievementKey={achievement.key} className="w-5 h-5" />
         ) : (
           <Lock className="w-4 h-4 text-text-3" />
         )}
@@ -49,4 +50,3 @@ export function AchievementBadge({ achievement, index = 0 }) {
     </motion.div>
   );
 }
-

@@ -32,7 +32,7 @@ export function Notes() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isNotebookModalOpen, setIsNotebookModalOpen] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
-  const [newNotebookColor, setNewNotebookColor] = useState('#EC4899');
+  const [newNotebookColor, setNewNotebookColor] = useState('#D63B6A');
 
   // Filter notes
   const filteredNotes = notes.filter((n) => {
@@ -300,7 +300,7 @@ export function Notes() {
           <div className="space-y-2">
             <label className="block text-xs font-semibold text-text-2">Cor da capa</label>
             <div className="flex gap-2">
-              {['#EC4899', '#F472B6', '#A855F7', '#6366F1', '#3B82F6', '#10B981', '#F59E0B'].map(
+              {['#D63B6A', '#F07297', '#F0A0B5', '#A855F7', '#6366F1', '#10B981', '#F59E0B'].map(
                 (c) => (
                   <button
                     key={c}

@@ -2,11 +2,38 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <link
+      id="mt-favicon-svg"
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg width='512' height='512' viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='512' height='512' rx='128' fill='%23F9C6D0'/%3E%3Crect x='128' y='144' width='64' height='64' rx='16' fill='%23D63B6A'/%3E%3Crect x='224' y='160' width='176' height='32' rx='16' fill='%23D63B6A' opacity='0.5'/%3E%3Crect x='128' y='240' width='64' height='64' rx='16' fill='%23D63B6A'/%3E%3Crect x='224' y='256' width='136' height='32' rx='16' fill='%23D63B6A' opacity='0.5'/%3E%3Cpolyline points='136,176 152,200 192,160' fill='none' stroke='white' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpolyline points='136,272 152,296 192,256' fill='none' stroke='white' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='128' y='336' width='64' height='64' rx='16' fill='%23F0A0B5' opacity='0.6'/%3E%3Crect x='224' y='352' width='104' height='32' rx='16' fill='%23D63B6A' opacity='0.3'/%3E%3C/svg%3E"
+    />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=5" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=5" />
+    <link rel="shortcut icon" href="/favicon.ico?v=5" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5" />
+    <link rel="manifest" href="/manifest.webmanifest?v=5" />
+    <script>
+      // Purge stale Service Worker caches that held the old favicon and force-apply the new icon
+      (function () {
+        try {
+          if ('caches' in window) {
+            caches.keys().then(function (keys) {
+              keys.forEach(function (k) {
+                if (k !== 'meu-tempo-v5') caches.delete(k);
+              });
+            });
+          }
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              regs.forEach(function (r) {
+                r.update();
+              });
+            });
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#D63B6A" />
     <meta name="description" content="Meu Tempo — Notas, tarefas e controle real do seu tempo com estética refinada." />
