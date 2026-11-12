@@ -120,6 +120,7 @@ export const api = {
   // Settings & User
   getUser: async () => (await apiClient.get('/user')).data,
   updateUser: async (data) => (await apiClient.put('/user', data)).data,
+  completeOnboarding: async (data) => (await apiClient.post('/onboarding', data)).data,
   getSchedule: async () => (await apiClient.get('/schedule')).data,
   updateSchedule: async (data) => (await apiClient.put('/schedule', data)).data,
   getCommitments: async () => (await apiClient.get('/commitments')).data,

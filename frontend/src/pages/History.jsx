@@ -68,26 +68,65 @@ export function History() {
     window.print();
   };
 
-  const hoursData = (hoursPerDay || []).map((d) => ({
-    dia: d.day_label || d.date?.slice(5) || '',
-    horas: Number((d.hours || 0).toFixed(1)),
-  }));
+  // Safe data transformers
+  const rawHours = Array.isArray(hoursPerDay) ? hoursPerDay : [];
+  const hoursData = rawHours.map((d) => {
+    const rawVal = d.hours !== undefined ? d.hours : (d.minutes ? d.minutes / 60 : 0);
+    return {
+      dia: d.day_label || (d.date ? d.date.slice(5) : ''),
+      horas: Number(Number(rawVal).toFixed(1)),
+    };
+  });
 
-  const tasksWeekData = (tasksPerWeek || []).map((w) => ({
+  const rawWeeks = Array.isArray(tasksPerWeek) ? tasksPerWeek : [];
+  const tasksWeekData = rawWeeks.map((w) => ({
     semana: w.label || w.week || '',
-    concluidas: w.count || w.completed || 0,
+    concluidas: (w.completed_on_time ?? 0) + (w.completed_late ?? 0) || w.count || w.completed || 0,
   }));
 
-  const estVsRealCategory = (estimatedVsReal?.by_category || []).map((c) => ({
-    nome: c.category_name || c.name,
-    estimado: Math.round((c.estimated_minutes || 0) / 60),
-    real: Math.round((c.real_minutes || 0) / 60),
+  const rawCats = Array.isArray(estimatedVsReal?.by_category)
+    ? estimatedVsReal.by_category
+    : Array.isArray(estimatedVsReal)
+    ? estimatedVsReal
+    : [];
+  const estVsRealCategory = rawCats.map((c) => ({
+    nome: c.label || c.category_name || c.name || 'Geral',
+    estimado: Number(((c.avg_estimated ?? c.estimated_minutes ?? 0) / 60).toFixed(1)),
+    real: Number(((c.avg_real ?? c.real_minutes ?? 0) / 60).toFixed(1)),
   }));
 
-  const prodHourData = (productivityByHour || []).map((h) => ({
+  const rawHoursList = Array.isArray(productivityByHour)
+    ? productivityByHour
+    : Array.isArray(productivityByHour?.hours_chart)
+    ? productivityByHour.hours_chart
+    : [];
+  const prodHourData = rawHoursList.map((h) => ({
     hora: `${h.hour}h`,
-    minutos: Math.round(h.worked_minutes || 0),
+    minutos: Math.round(h.minutes ?? h.worked_minutes ?? 0),
   }));
+
+  const safeAchievements = Array.isArray(achievements)
+    ? achievements
+    : Array.isArray(achievements?.achieved)
+    ? [
+        ...achievements.achieved.map((a, i) => ({
+          id: a.key ? `ach-${a.key}` : `ach-${i}`,
+          key: a.key,
+          title: a.title,
+          description: a.next_target
+            ? `Progresso: ${a.progress} • Próximo marco: ${a.next_target}`
+            : 'Marco desbloqueado com consistência',
+          unlocked: true,
+        })),
+        ...(achievements.next_up || []).map((n, i) => ({
+          id: n.key ? `next-${n.key}` : `next-${i}`,
+          key: n.key,
+          title: n.label,
+          description: `Em progresso: ${n.progress} de ${n.target}`,
+          unlocked: false,
+        })),
+      ]
+    : [];
 
   return (
     <div className="space-y-8 pb-16">
@@ -141,7 +180,11 @@ export function History() {
               Horas registradas
             </span>
             <p className="text-xl font-extrabold text-primary mt-1">
-              {weekSummary?.worked_hours ? `${weekSummary.worked_hours}h` : '0h'}
+              {weekSummary?.worked_minutes !== undefined
+                ? `${(weekSummary.worked_minutes / 60).toFixed(1)}h`
+                : weekSummary?.worked_hours
+                ? `${weekSummary.worked_hours}h`
+                : '0h'}
             </p>
           </div>
 
@@ -150,7 +193,7 @@ export function History() {
               Tarefas concluídas
             </span>
             <p className="text-xl font-extrabold text-text mt-1">
-              {weekSummary?.completed_tasks || 0}
+              {weekSummary?.completed ?? weekSummary?.completed_tasks ?? 0}
             </p>
           </div>
 
@@ -159,23 +202,31 @@ export function History() {
               Precisão média
             </span>
             <p className="text-xl font-extrabold text-text mt-1">
-              {weekSummary?.precision_rate ? `${weekSummary.precision_rate}%` : '—'}
+              {weekSummary?.precision_percent != null
+                ? `${weekSummary.precision_percent}%`
+                : weekSummary?.precision_rate
+                ? `${weekSummary.precision_rate}%`
+                : '—'}
             </p>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-surface/80 border border-primary-border/40">
             <span className="text-[11px] text-text-3 font-semibold uppercase tracking-wider">
-              Dias produtivos
+              Destaque
             </span>
-            <p className="text-xl font-extrabold text-text mt-1">
-              {weekSummary?.active_days || 0} / 7
+            <p className="text-sm font-bold text-text mt-2 truncate">
+              {weekSummary?.top_category
+                ? weekSummary.top_category
+                : weekSummary?.top_project
+                ? weekSummary.top_project
+                : `${weekSummary?.created ?? 0} criadas`}
             </p>
           </div>
         </div>
 
-        {weekSummary?.message && (
+        {productivityByHour?.peak_message && (
           <p className="text-xs text-text-2 mt-4 p-3 rounded-xl bg-primary-soft/60 border border-primary/20 leading-relaxed">
-            {weekSummary.message}
+            {productivityByHour.peak_message}
           </p>
         )}
       </section>
@@ -237,7 +288,7 @@ export function History() {
         {/* Chart 3: Estimated vs Real by Category */}
         <div className="p-5 rounded-3xl bg-surface border border-primary-border/60 shadow-sm backdrop-blur-sm">
           <h3 className="text-sm font-bold text-text mb-1">Tempo Estimado vs Real por Categoria</h3>
-          <p className="text-xs text-text-3 mb-4">Comparação em horas</p>
+          <p className="text-xs text-text-3 mb-4">Comparação média em horas</p>
 
           <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -306,13 +357,13 @@ export function History() {
             <p className="text-xs text-text-3">Recompensas pelo seu progresso e consistência</p>
           </div>
           <span className="text-xs font-semibold text-primary px-2.5 py-1 rounded-full bg-primary-soft">
-            {(achievements || []).filter((a) => a.unlocked).length} de{' '}
-            {(achievements || []).length} desbloqueadas
+            {safeAchievements.filter((a) => a.unlocked).length} de{' '}
+            {safeAchievements.length} desbloqueadas
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {(achievements || []).map((ach, idx) => (
+          {safeAchievements.map((ach, idx) => (
             <AchievementBadge key={ach.id || idx} achievement={ach} index={idx} />
           ))}
         </div>
@@ -355,4 +406,3 @@ export function History() {
     </div>
   );
 }
-

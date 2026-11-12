@@ -267,9 +267,20 @@ export function Settings() {
             icon={<Clock className="w-4 h-4" />}
           />
 
-          <Button type="submit" loading={updateUserMutation.isPending} size="sm">
-            Salvar perfil
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <Button type="submit" loading={updateUserMutation.isPending} size="sm">
+              Salvar perfil
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => window.dispatchEvent(new CustomEvent('mt-open-onboarding'))}
+            >
+              <Sparkles className="w-3.5 h-3.5 mr-1 text-primary" />
+              <span>Apresentação de boas-vindas</span>
+            </Button>
+          </div>
         </form>
       </section>
 

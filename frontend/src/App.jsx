@@ -12,6 +12,8 @@ import { TopBar } from './components/layout/TopBar';
 import { CompletionModal } from './components/features/CompletionModal';
 import { CommandPalette } from './components/features/CommandPalette';
 import { FocusSanctuaryModal } from './components/features/FocusSanctuaryModal';
+import { OnboardingModal } from './components/features/OnboardingModal';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ToastProvider } from './components/ui/Toast';
 
 // Pages
@@ -57,6 +59,7 @@ const pageVariants = {
 export function App() {
   const location = useLocation();
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [sanctuaryState, setSanctuaryState] = useState({
     isOpen: false,
     tab: 'sound',
@@ -67,7 +70,8 @@ export function App() {
     }
     return true;
   });
-  const setUser = useUserStore((s) => s.setUser);
+
+  const { user, setUser } = useUserStore();
 
   useEffect(() => {
     const handleReplay = () => {
@@ -79,11 +83,18 @@ export function App() {
         tab: e?.detail === 'breath' ? 'breath' : 'sound',
       });
     };
+    const handleOpenOnboarding = () => {
+      setIsOnboardingOpen(true);
+    };
+
     window.addEventListener('mt-replay-splash', handleReplay);
     window.addEventListener('mt-open-sanctuary', handleOpenSanctuary);
+    window.addEventListener('mt-open-onboarding', handleOpenOnboarding);
+
     return () => {
       window.removeEventListener('mt-replay-splash', handleReplay);
       window.removeEventListener('mt-open-sanctuary', handleOpenSanctuary);
+      window.removeEventListener('mt-open-onboarding', handleOpenOnboarding);
     };
   }, []);
 
@@ -93,13 +104,26 @@ export function App() {
     queryFn: async () => {
       try {
         const u = await api.getUser();
-        if (u) setUser(u);
+        if (u) {
+          setUser(u);
+          // If user hasn't onboarded, prompt after splash
+          if (u.onboarded === false) {
+            setIsOnboardingOpen(true);
+          }
+        }
         return u;
       } catch {
         return null;
       }
     },
   });
+
+  // If splash was active and just closed, check if onboarding is needed
+  useEffect(() => {
+    if (!showSplash && user?.onboarded === false) {
+      setIsOnboardingOpen(true);
+    }
+  }, [showSplash, user?.onboarded]);
 
   // Fetch notes & tasks for Command Palette
   const { data: notes = [] } = useQuery({
@@ -147,27 +171,29 @@ export function App() {
           <TopBar onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
 
           <main className="flex-1 px-4 sm:px-8 py-6 max-w-6xl w-full mx-auto">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={location.pathname}
-                custom={direction}
-                variants={pageVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.28, ease: 'easeOut' }}
-                className="w-full"
-              >
-                <Routes location={location}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/tarefas" element={<Tasks />} />
-                  <Route path="/notas" element={<Notes />} />
-                  <Route path="/historico" element={<History />} />
-                  <Route path="/configuracoes" element={<Settings />} />
-                  <Route path="*" element={<Home />} />
-                </Routes>
-              </motion.div>
-            </AnimatePresence>
+            <ErrorBoundary>
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={location.pathname}
+                  custom={direction}
+                  variants={pageVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.28, ease: 'easeOut' }}
+                  className="w-full"
+                >
+                  <Routes location={location}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/tarefas" element={<Tasks />} />
+                    <Route path="/notas" element={<Notes />} />
+                    <Route path="/historico" element={<History />} />
+                    <Route path="/configuracoes" element={<Settings />} />
+                    <Route path="*" element={<Home />} />
+                  </Routes>
+                </motion.div>
+              </AnimatePresence>
+            </ErrorBoundary>
           </main>
 
           {/* Mobile Bottom Dock (hidden on desktop) */}
@@ -181,6 +207,12 @@ export function App() {
             onComplete={() => setShowSplash(false)}
           />
         )}
+
+        {/* First Access Onboarding Modal */}
+        <OnboardingModal
+          isOpen={isOnboardingOpen && !showSplash}
+          onClose={() => setIsOnboardingOpen(false)}
+        />
 
         {/* Global Modals */}
         <CompletionModal />
