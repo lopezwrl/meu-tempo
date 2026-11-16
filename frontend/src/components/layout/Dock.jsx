@@ -1,14 +1,15 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, CheckSquare, BookOpen, BarChart3, Settings } from 'lucide-react';
+import { Home, CheckSquare, CalendarDays, BookOpen, BarChart3, Settings } from 'lucide-react';
 
 export const DOCK_ITEMS = [
   { path: '/', label: 'Início', icon: Home, index: 0 },
   { path: '/tarefas', label: 'Tarefas', icon: CheckSquare, index: 1 },
-  { path: '/notas', label: 'Notas', icon: BookOpen, index: 2 },
-  { path: '/historico', label: 'Histórico', icon: BarChart3, index: 3 },
-  { path: '/configuracoes', label: 'Mais', icon: Settings, index: 4 },
+  { path: '/planejar', label: 'Planejar', icon: CalendarDays, index: 2 },
+  { path: '/notas', label: 'Notas', icon: BookOpen, index: 3 },
+  { path: '/historico', label: 'Histórico', icon: BarChart3, index: 4 },
+  { path: '/configuracoes', label: 'Mais', icon: Settings, index: 5 },
 ];
 
 export function Dock() {
@@ -105,7 +106,7 @@ export function Dock() {
   }, []);
 
   return (
-    <div className="lg:hidden fixed bottom-5 inset-x-0 z-40 flex justify-center pointer-events-none px-4">
+    <div className="lg:hidden fixed bottom-4 inset-x-0 z-40 flex justify-center pointer-events-none px-2">
       <motion.nav
         ref={dockRef}
         aria-label="Navegação móvel"
@@ -114,7 +115,7 @@ export function Dock() {
           opacity: isVisible ? 1 : 0,
         }}
         transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-        className="dock-container pointer-events-auto relative flex items-center gap-0.5 p-1.5 rounded-full bg-surface/90 backdrop-blur-xl border border-primary-border shadow-xl shadow-pink-500/10"
+        className="dock-container pointer-events-auto relative flex items-center gap-0.5 p-1.5 rounded-full bg-surface/95 backdrop-blur-xl border border-primary-border shadow-lg max-w-[calc(100vw-1rem)] overflow-x-auto scrollbar-none"
       >
         {/* Sliding Indicator Pill */}
         {indicatorStyle.ready && (
@@ -142,7 +143,7 @@ export function Dock() {
               key={item.path}
               to={item.path}
               ref={(el) => (itemRefs.current[index] = el)}
-              className={`relative z-10 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold select-none transition-colors duration-200 outline-none ${
+              className={`relative z-10 flex items-center justify-center gap-1 px-2.5 sm:px-3.5 py-2 rounded-full text-xs font-semibold select-none transition-colors duration-200 outline-none shrink-0 ${
                 isActive ? 'text-primary' : 'text-text-3 hover:text-text-2'
               }`}
             >

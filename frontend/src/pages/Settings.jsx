@@ -6,6 +6,7 @@ import { useUserStore } from '../stores/userStore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { useToast } from '../components/ui/Toast';
+import { CategoryIcon, CATEGORY_ICON_OPTIONS } from '../components/ui/CategoryIcon';
 import {
   Sun,
   Moon,
@@ -17,6 +18,7 @@ import {
   Trash2,
   User,
   Play,
+  Tag,
 } from 'lucide-react';
 
 const WEEKDAYS = [
@@ -47,7 +49,17 @@ export function Settings() {
   const [commitmentStart, setCommitmentStart] = useState('09:00');
   const [commitmentEnd, setCommitmentEnd] = useState('10:00');
 
+  // New category form state
+  const [categoryName, setCategoryName] = useState('');
+  const [categoryIcon, setCategoryIcon] = useState('briefcase');
+  const [categoryColor, setCategoryColor] = useState('#D63B6A');
+
   // Queries
+  const { data: categoriesData = [] } = useQuery({
+    queryKey: queryKeys.categories,
+    queryFn: api.getCategories,
+  });
+
   const { data: scheduleData } = useQuery({
     queryKey: queryKeys.schedule,
     queryFn: api.getSchedule,
@@ -97,6 +109,23 @@ export function Settings() {
     onSuccess: (data) => {
       setUser(data);
       addToast({ title: 'Perfil atualizado', message: 'Seu nome foi alterado com sucesso!', type: 'success' });
+    },
+  });
+
+  const createCategoryMutation = useMutation({
+    mutationFn: api.createCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories });
+      setCategoryName('');
+      addToast({ title: 'Categoria criada', message: 'Nova categoria pronta para uso.', type: 'success' });
+    },
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: api.deleteCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tasks });
     },
   });
 
@@ -482,6 +511,114 @@ export function Settings() {
           <div className="flex justify-end">
             <Button type="submit" size="sm" loading={createCommitmentMutation.isPending}>
               Adicionar compromisso
+            </Button>
+          </div>
+        </form>
+      </section>
+
+      {/* Categorias Personalizadas */}
+      <section className="p-6 rounded-3xl bg-surface border border-primary-border/60 shadow-sm space-y-4">
+        <div>
+          <h2 className="text-sm font-bold text-text flex items-center gap-2">
+            <Tag className="w-4 h-4 text-primary" />
+            <span>Categorias Personalizadas</span>
+          </h2>
+          <p className="text-xs text-text-3">
+            Crie categorias com ícones SVG para classificar suas tarefas
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {categoriesData.map((cat) => (
+            <div
+              key={cat.id}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-2 border border-primary-border/50 text-xs font-semibold text-text"
+            >
+              <span
+                className="w-2 h-2 rounded-full shrink-0"
+                style={{ backgroundColor: cat.color || '#D63B6A' }}
+              />
+              <CategoryIcon icon={cat.icon} name={cat.name} className="w-3.5 h-3.5 text-primary" />
+              <span>{cat.name}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm(`Remover a categoria "${cat.name}"?`)) {
+                    deleteCategoryMutation.mutate(cat.id);
+                  }
+                }}
+                className="p-0.5 text-text-3 hover:text-rose-500 transition-colors ml-1"
+                title="Excluir categoria"
+              >
+                <Trash2 className="w-3 h-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!categoryName.trim()) return;
+            createCategoryMutation.mutate({
+              name: categoryName.trim(),
+              icon: categoryIcon,
+              color: categoryColor,
+            });
+          }}
+          className="p-4 rounded-2xl bg-surface-2/40 border border-primary-border/40 space-y-3"
+        >
+          <h4 className="text-xs font-bold text-text">Nova categoria</h4>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input
+              placeholder="Ex.: Saúde, Finanças, Cliente..."
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              required
+            />
+
+            <div className="flex items-center gap-2 flex-wrap">
+              {['#D63B6A', '#E85280', '#9E506B', '#6366F1', '#0F766E', '#B45309'].map((col) => (
+                <button
+                  key={col}
+                  type="button"
+                  onClick={() => setCategoryColor(col)}
+                  className={`w-6 h-6 rounded-full border-2 transition-transform ${
+                    categoryColor === col ? 'scale-125 border-text' : 'border-transparent'
+                  }`}
+                  style={{ backgroundColor: col }}
+                  aria-label={`Selecionar cor ${col}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <span className="block text-xs font-medium text-text-2">Ícone SVG</span>
+            <div className="flex flex-wrap gap-1.5">
+              {CATEGORY_ICON_OPTIONS.map(({ id, label, Icon }) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setCategoryIcon(id)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-medium transition-all ${
+                    categoryIcon === id
+                      ? 'bg-primary-soft border-primary text-primary'
+                      : 'bg-surface border-primary-border/50 text-text-3 hover:border-primary/40'
+                  }`}
+                  title={label}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button type="submit" size="sm" loading={createCategoryMutation.isPending}>
+              Adicionar categoria
             </Button>
           </div>
         </form>

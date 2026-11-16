@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTasks } from '../hooks/useTasks';
 import { useNotes } from '../hooks/useNotes';
 import { useEnergyStore } from '../stores/energyStore';
@@ -12,12 +13,23 @@ import {
   Plus,
   Filter,
   BatteryCharging,
+  FolderKanban,
 } from 'lucide-react';
 
 export function Tasks() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('pendentes'); // 'todas' | 'pendentes' | 'concluidas'
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(() => {
+    const p = searchParams.get('projeto');
+    return p ? parseInt(p, 10) : null;
+  });
+
+  useEffect(() => {
+    const p = searchParams.get('projeto');
+    if (p) setSelectedProject(parseInt(p, 10));
+  }, [searchParams]);
   const [selectedEnergy, setSelectedEnergy] = useState(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
@@ -102,17 +114,28 @@ export function Tasks() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            setTaskToEdit(null);
-            setIsTaskModalOpen(true);
-          }}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-primary text-white text-xs font-semibold hover:bg-primary-light shadow-md shadow-pink-500/20 transition-all active:scale-95 shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Nova tarefa</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => navigate('/planejar?tab=projetos')}
+            className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-surface border border-primary-border/60 text-text-2 hover:text-primary hover:border-primary text-xs font-semibold transition-all"
+          >
+            <FolderKanban className="w-4 h-4 text-primary" />
+            <span>Projetos</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setTaskToEdit(null);
+              setIsTaskModalOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-primary text-white text-xs font-semibold hover:bg-primary-light shadow-sm transition-all active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Nova tarefa</span>
+          </button>
+        </div>
       </div>
 
       {/* Quick Add Bar */}

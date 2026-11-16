@@ -1,7 +1,6 @@
 import React from 'react';
 import { useUserStore } from '../../stores/userStore';
 import { useThemeStore } from '../../stores/themeStore';
-import { TimerPill } from './TimerPill';
 import { Search, Sun, Moon, Headphones, Wind } from 'lucide-react';
 
 export function TopBar({ onOpenCommandPalette }) {
@@ -42,10 +41,8 @@ export function TopBar({ onOpenCommandPalette }) {
           </p>
         </div>
 
-        {/* Right Actions & Floating Timer Pill */}
-        <div className="flex items-center gap-2">
-          {/* Timer Pill */}
-          <TimerPill />
+        {/* Right Actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
 
           {/* Focus Sanctuary Quick Button */}
           <button

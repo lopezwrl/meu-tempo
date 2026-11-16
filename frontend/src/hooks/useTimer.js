@@ -17,6 +17,15 @@ export function useTimer() {
     closeCompletionModal,
     showCompletionModal,
     completingTask,
+    timerMode,
+    focusMin,
+    breakMin,
+    pomodoroPhase,
+    pomodoroRemaining,
+    pomodoroPrompt,
+    setPomodoroConfig,
+    dismissPomodoroPrompt,
+    skipPomodoroPhase,
   } = useTimerStore();
 
   // Fetch active timer from backend
@@ -36,13 +45,18 @@ export function useTimer() {
         setActiveTask(null);
       }
     }
-  }, [activeData, setActiveTask]);
+  }, [activeData, activeTask, setActiveTask]);
 
-  // Tick timer every second when running
+  // Tick timer every second when running (and ring Zen bell when Pomodoro phase completes)
   useEffect(() => {
     if (!isRunning) return;
     const interval = setInterval(() => {
-      tick();
+      const completedPhase = tick();
+      if (completedPhase === 'focus') {
+        soundEffects.playTimerBell();
+      } else if (completedPhase === 'break') {
+        soundEffects.playChime();
+      }
     }, 1000);
     return () => clearInterval(interval);
   }, [isRunning, tick]);
@@ -76,7 +90,7 @@ export function useTimer() {
         particleCount: 45,
         spread: 70,
         origin: { y: 0.6, x: 0.5 },
-        colors: ['#EC4899', '#F472B6', '#FFF0F5', '#c084fc', '#fb7185'],
+        colors: ['#D63B6A', '#F9C6D0', '#F0A0B5', '#FFFFFF'],
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.tasks });
       queryClient.invalidateQueries({ queryKey: queryKeys.activeTimer });
@@ -112,11 +126,38 @@ export function useTimer() {
     [activeTask, isRunning, pauseMutation, startMutation]
   );
 
+  const displayedSeconds =
+    timerMode === 'pomodoro' ? pomodoroRemaining : workedSeconds;
+
+  const pomodoroTotalSeconds =
+    (pomodoroPhase === 'focus' ? focusMin : breakMin) * 60;
+  const pomodoroProgress =
+    timerMode === 'pomodoro' && pomodoroTotalSeconds > 0
+      ? Math.min(
+          100,
+          Math.max(
+            0,
+            ((pomodoroTotalSeconds - pomodoroRemaining) / pomodoroTotalSeconds) * 100
+          )
+        )
+      : 0;
+
   return {
     activeTask,
     workedSeconds,
     isRunning,
-    formattedTime: formatTime(workedSeconds),
+    formattedTime: formatTime(displayedSeconds),
+    elapsedFormattedTime: formatTime(workedSeconds),
+    timerMode,
+    focusMin,
+    breakMin,
+    pomodoroPhase,
+    pomodoroRemaining,
+    pomodoroProgress,
+    pomodoroPrompt,
+    setPomodoroConfig,
+    dismissPomodoroPrompt,
+    skipPomodoroPhase,
     startTimer: (taskId, force = false) => startMutation.mutateAsync({ taskId, force }),
     pauseTimer: (taskId) => pauseMutation.mutateAsync(taskId),
     finishTimer: (taskId, data) => finishMutation.mutateAsync({ taskId, data }),
@@ -128,4 +169,3 @@ export function useTimer() {
     formatTime,
   };
 }
-

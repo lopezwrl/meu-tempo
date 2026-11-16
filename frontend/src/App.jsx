@@ -9,6 +9,7 @@ import { SplashScreen } from './components/layout/SplashScreen';
 import { Sidebar } from './components/layout/Sidebar';
 import { Dock } from './components/layout/Dock';
 import { TopBar } from './components/layout/TopBar';
+import { TimerPill } from './components/layout/TimerPill';
 import { CompletionModal } from './components/features/CompletionModal';
 import { CommandPalette } from './components/features/CommandPalette';
 import { FocusSanctuaryModal } from './components/features/FocusSanctuaryModal';
@@ -19,6 +20,7 @@ import { ToastProvider } from './components/ui/Toast';
 // Pages
 import { Home } from './pages/Home';
 import { Tasks } from './pages/Tasks';
+import { Planner } from './pages/Planner';
 import { Notes } from './pages/Notes';
 import { History } from './pages/History';
 import { Settings } from './pages/Settings';
@@ -26,9 +28,10 @@ import { Settings } from './pages/Settings';
 const ROUTE_INDICES = {
   '/': 0,
   '/tarefas': 1,
-  '/notas': 2,
-  '/historico': 3,
-  '/configuracoes': 4,
+  '/planejar': 2,
+  '/notas': 3,
+  '/historico': 4,
+  '/configuracoes': 5,
 };
 
 function getRouteIndex(pathname) {
@@ -170,7 +173,7 @@ export function App() {
         <div className="flex-1 flex flex-col min-w-0 min-h-screen relative z-10">
           <TopBar onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
 
-          <main className="flex-1 px-4 sm:px-8 py-6 max-w-6xl w-full mx-auto">
+          <main className="flex-1 px-3 sm:px-8 py-5 pb-28 lg:pb-8 max-w-6xl w-full mx-auto">
             <ErrorBoundary>
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
@@ -186,6 +189,8 @@ export function App() {
                   <Routes location={location}>
                     <Route path="/" element={<Home />} />
                     <Route path="/tarefas" element={<Tasks />} />
+                    <Route path="/planejar" element={<Planner />} />
+                    <Route path="/projetos" element={<Planner />} />
                     <Route path="/notas" element={<Notes />} />
                     <Route path="/historico" element={<History />} />
                     <Route path="/configuracoes" element={<Settings />} />
@@ -214,7 +219,8 @@ export function App() {
           onClose={() => setIsOnboardingOpen(false)}
         />
 
-        {/* Global Modals */}
+        {/* Global Floating Timer Pill & Modals */}
+        <TimerPill />
         <CompletionModal />
         <FocusSanctuaryModal
           isOpen={sanctuaryState.isOpen}

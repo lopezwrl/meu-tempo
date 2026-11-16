@@ -42,7 +42,22 @@ const CATEGORY_ICON_MAP = {
   finanças: Wallet,
   folder: Folder,
   sparkles: Star,
+  star: Star,
+  tag: Tag,
 };
+
+export const CATEGORY_ICON_OPTIONS = [
+  { id: 'briefcase', label: 'Trabalho', Icon: Briefcase },
+  { id: 'code', label: 'Código', Icon: Code2 },
+  { id: 'book', label: 'Estudos', Icon: BookOpen },
+  { id: 'home', label: 'Pessoal', Icon: Home },
+  { id: 'phone', label: 'Chamadas', Icon: PhoneCall },
+  { id: 'saude', label: 'Saúde', Icon: HeartPulse },
+  { id: 'financas', label: 'Finanças', Icon: Wallet },
+  { id: 'folder', label: 'Pasta', Icon: Folder },
+  { id: 'star', label: 'Destaque', Icon: Star },
+  { id: 'tag', label: 'Geral', Icon: Tag },
+];
 
 /**
  * Renders a crisp professional SVG icon for any category,
