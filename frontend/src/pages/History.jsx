@@ -162,21 +162,19 @@ export function History() {
         </div>
       </div>
 
-      {/* Resumo Executivo da Semana em Card Destacado */}
-      <section className="p-6 rounded-3xl bg-gradient-to-tr from-pink-500/10 via-surface to-rose-400/5 border border-primary-border shadow-sm backdrop-blur-md">
+      {/* Resumo Executivo da Semana */}
+      <section className="p-6 rounded-3xl bg-surface border border-primary-border/70 shadow-sm">
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="w-9 h-9 rounded-2xl bg-primary text-white flex items-center justify-center shadow-md shadow-pink-500/20">
-            <TrendingUp className="w-5 h-5" />
-          </div>
+          <TrendingUp className="w-5 h-5 text-primary shrink-0" />
           <div>
-            <h2 className="text-sm font-bold text-text">Resumo Executivo da Semana</h2>
+            <h2 className="text-sm font-bold text-text">Resumo da semana</h2>
             <p className="text-xs text-text-3">Visão consolidada do seu ritmo de trabalho</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
-          <div className="p-3.5 rounded-2xl bg-surface/80 border border-primary-border/40">
-            <span className="text-[11px] text-text-3 font-semibold uppercase tracking-wider">
+          <div className="p-3.5 rounded-2xl bg-surface-2/70 border border-primary-border/40">
+            <span className="text-xs text-text-3 font-medium">
               Horas registradas
             </span>
             <p className="text-xl font-extrabold text-primary mt-1">
@@ -188,8 +186,8 @@ export function History() {
             </p>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-surface/80 border border-primary-border/40">
-            <span className="text-[11px] text-text-3 font-semibold uppercase tracking-wider">
+          <div className="p-3.5 rounded-2xl bg-surface-2/70 border border-primary-border/40">
+            <span className="text-xs text-text-3 font-medium">
               Tarefas concluídas
             </span>
             <p className="text-xl font-extrabold text-text mt-1">
@@ -197,8 +195,8 @@ export function History() {
             </p>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-surface/80 border border-primary-border/40">
-            <span className="text-[11px] text-text-3 font-semibold uppercase tracking-wider">
+          <div className="p-3.5 rounded-2xl bg-surface-2/70 border border-primary-border/40">
+            <span className="text-xs text-text-3 font-medium">
               Precisão média
             </span>
             <p className="text-xl font-extrabold text-text mt-1">
@@ -210,8 +208,8 @@ export function History() {
             </p>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-surface/80 border border-primary-border/40">
-            <span className="text-[11px] text-text-3 font-semibold uppercase tracking-wider">
+          <div className="p-3.5 rounded-2xl bg-surface-2/70 border border-primary-border/40">
+            <span className="text-xs text-text-3 font-medium">
               Destaque
             </span>
             <p className="text-sm font-bold text-text mt-2 truncate">
@@ -234,7 +232,7 @@ export function History() {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart 1: Hours per Day (30 days) */}
-        <div className="p-5 rounded-3xl bg-surface border border-primary-border/60 shadow-sm backdrop-blur-sm">
+        <div className="p-5 rounded-3xl bg-surface border border-primary-border/70 shadow-sm">
           <h3 className="text-sm font-bold text-text mb-1">Horas por dia (Últimos 30 dias)</h3>
           <p className="text-xs text-text-3 mb-4">Volume diário de tempo em foco</p>
 
@@ -260,7 +258,7 @@ export function History() {
         </div>
 
         {/* Chart 2: Tasks completed per week (8 weeks) */}
-        <div className="p-5 rounded-3xl bg-surface border border-primary-border/60 shadow-sm backdrop-blur-sm">
+        <div className="p-5 rounded-3xl bg-surface border border-primary-border/70 shadow-sm">
           <h3 className="text-sm font-bold text-text mb-1">Tarefas concluídas por semana</h3>
           <p className="text-xs text-text-3 mb-4">Evolução do ritmo de entregas</p>
 
@@ -286,7 +284,7 @@ export function History() {
         </div>
 
         {/* Chart 3: Estimated vs Real by Category */}
-        <div className="p-5 rounded-3xl bg-surface border border-primary-border/60 shadow-sm backdrop-blur-sm">
+        <div className="p-5 rounded-3xl bg-surface border border-primary-border/70 shadow-sm">
           <h3 className="text-sm font-bold text-text mb-1">Tempo Estimado vs Real por Categoria</h3>
           <p className="text-xs text-text-3 mb-4">Comparação média em horas</p>
 
@@ -313,7 +311,7 @@ export function History() {
         </div>
 
         {/* Chart 4: Productivity by Hour of Day */}
-        <div className="p-5 rounded-3xl bg-surface border border-primary-border/60 shadow-sm backdrop-blur-sm">
+        <div className="p-5 rounded-3xl bg-surface border border-primary-border/70 shadow-sm">
           <h3 className="text-sm font-bold text-text mb-1">Produtividade por Horário do Dia</h3>
           <p className="text-xs text-text-3 mb-4">Momentos com maior volume de foco</p>
 

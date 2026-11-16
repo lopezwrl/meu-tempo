@@ -16,7 +16,7 @@ import {
   Upload,
   Trash2,
   User,
-  Sparkles,
+  Play,
 } from 'lucide-react';
 
 const WEEKDAYS = [
@@ -212,11 +212,11 @@ export function Settings() {
             onClick={() => setTheme('auto')}
             className={`flex items-center gap-3 p-3.5 rounded-2xl border text-xs font-semibold transition-all ${
               theme === 'auto'
-                ? 'bg-primary-soft border-primary text-primary shadow-sm shadow-pink-500/10'
+                ? 'bg-primary-soft border-primary text-primary shadow-sm'
                 : 'bg-surface-2 border-primary-border/40 text-text-2 hover:border-primary/40'
             }`}
           >
-            <Laptop className="w-5 h-5 text-purple-500" />
+            <Laptop className="w-5 h-5 text-primary" />
             <div className="text-left">
               <p>Seguir Sistema</p>
               <span className="text-[10px] text-text-3 font-normal">Adapta-se ao seu SO</span>
@@ -227,14 +227,14 @@ export function Settings() {
         <div className="pt-3 border-t border-primary-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-xs font-semibold text-text">Animação de Entrada</h3>
-            <p className="text-[11px] text-text-3">Ícone do Meu Tempo com rotação de ponteiros e morphing de texto</p>
+            <p className="text-[11px] text-text-3">Apresentação animada do emblema do Meu Tempo</p>
           </div>
           <Button
             size="sm"
             variant="outline"
             onClick={() => window.dispatchEvent(new CustomEvent('mt-replay-splash'))}
           >
-            <Sparkles className="w-3.5 h-3.5 mr-1 text-primary" />
+            <Play className="w-3.5 h-3.5 mr-1 text-primary" />
             <span>Ver animação de abertura</span>
           </Button>
         </div>
@@ -277,8 +277,8 @@ export function Settings() {
               size="sm"
               onClick={() => window.dispatchEvent(new CustomEvent('mt-open-onboarding'))}
             >
-              <Sparkles className="w-3.5 h-3.5 mr-1 text-primary" />
-              <span>Apresentação de boas-vindas</span>
+              <User className="w-3.5 h-3.5 mr-1 text-primary" />
+              <span>Configuração inicial</span>
             </Button>
           </div>
         </form>

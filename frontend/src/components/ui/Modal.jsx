@@ -44,7 +44,7 @@ export function Modal({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.94, opacity: 0, y: 10 }}
             transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-            className={`relative z-10 w-full ${maxWidth} bg-surface border border-primary-border/60 rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}
+            className={`relative z-10 w-full ${maxWidth} bg-surface border border-primary-border/70 rounded-3xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col`}
           >
             <div className="flex items-center justify-between px-6 py-4 border-b border-primary-border/40">
               <div>

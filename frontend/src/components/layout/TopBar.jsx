@@ -2,7 +2,7 @@ import React from 'react';
 import { useUserStore } from '../../stores/userStore';
 import { useThemeStore } from '../../stores/themeStore';
 import { TimerPill } from './TimerPill';
-import { Search, Sun, Moon, Sparkles, Headphones, Wind } from 'lucide-react';
+import { Search, Sun, Moon, Headphones, Wind } from 'lucide-react';
 
 export function TopBar({ onOpenCommandPalette }) {
   const user = useUserStore((s) => s.user);
@@ -34,9 +34,8 @@ export function TopBar({ onOpenCommandPalette }) {
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
         {/* Left Greeting & Date */}
         <div className="flex flex-col min-w-0">
-          <h1 className="text-lg sm:text-xl font-bold text-text tracking-tight truncate flex items-center gap-2">
-            <span>{getGreeting()}, {userName}</span>
-            <Sparkles className="w-4 h-4 text-primary shrink-0 fill-primary/20" />
+          <h1 className="text-lg sm:text-xl font-bold text-text tracking-tight truncate">
+            {getGreeting()}, {userName}
           </h1>
           <p className="text-xs text-text-3 font-medium capitalize mt-0.5">
             {displayDate}

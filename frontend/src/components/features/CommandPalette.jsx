@@ -93,7 +93,7 @@ export function CommandPalette({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: -20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-            className="relative z-10 w-full max-w-xl bg-surface border border-primary-border/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+            className="relative z-10 w-full max-w-xl bg-surface border border-primary-border/80 rounded-3xl shadow-xl overflow-hidden flex flex-col"
           >
             {/* Search Input Bar */}
             <div className="flex items-center px-4 py-3.5 border-b border-primary-border/40 gap-3">

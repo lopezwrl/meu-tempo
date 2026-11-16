@@ -40,16 +40,14 @@ export function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: delay * 0.04, ease: 'easeOut' }}
       whileHover={{ y: -2, transition: { duration: 0.15 } }}
-      className="bg-surface rounded-2xl border border-primary-border/60 p-5 shadow-[0_2px_12px_rgba(236,72,153,0.03)] backdrop-blur-sm flex flex-col justify-between"
+      className="bg-surface rounded-2xl border border-primary-border/70 p-5 shadow-sm flex flex-col justify-between"
     >
       <div className="flex items-center justify-between gap-3 mb-3">
-        <span className="text-xs font-semibold text-text-3 uppercase tracking-wider">
+        <span className="text-xs font-medium text-text-3">
           {title}
         </span>
         {Icon && (
-          <div className="w-8 h-8 rounded-xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
-            <Icon className="w-4 h-4" />
-          </div>
+          <Icon className="w-4 h-4 text-text-3 shrink-0" />
         )}
       </div>
 

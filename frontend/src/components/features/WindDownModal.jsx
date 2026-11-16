@@ -7,10 +7,7 @@ import { soundEffects } from '../../utils/audio';
 import {
   Moon,
   CheckCircle2,
-  Clock,
-  Target,
   FastForward,
-  Sparkles,
   Award,
 } from 'lucide-react';
 
@@ -59,25 +56,25 @@ export function WindDownModal({
         setMigratedSuccess(false);
         onClose();
       }}
-      title="Ritual de Fechamento do Dia"
-      description="Desconecte com tranquilidade celebrando seu progresso e organizando o amanhã"
+      title="Encerramento do Dia"
+      description="Resumo do que foi concluído e reagendamento rápido para amanhã"
     >
       <div className="space-y-5">
-        {/* Top SVG Emblem Banner */}
-        <div className="p-4 rounded-2xl bg-gradient-to-tr from-[#D63B6A]/10 via-[#F9C6D0]/20 to-surface border border-primary/25 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shrink-0 shadow-md shadow-[#D63B6A]/25">
-            <Moon className="w-6 h-6" />
+        {/* Top Banner */}
+        <div className="p-4 rounded-2xl bg-surface-2 border border-primary-border/60 flex items-center gap-4">
+          <div className="w-11 h-11 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+            <Moon className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-extrabold text-text">
+            <h4 className="text-sm font-bold text-text">
               {migratedSuccess
-                ? 'Dia encerrado com mente leve'
-                : 'Balanço da sua jornada de hoje'}
+                ? 'Dia encerrado'
+                : 'Resumo de hoje'}
             </h4>
             <p className="text-xs text-text-2 mt-0.5 leading-relaxed">
               {migratedSuccess
-                ? 'Todas as pendências foram transferidas para amanhã. Seu descanso agora é livre de culpa.'
-                : 'Reconheça cada entrega realizada hoje antes de encerrar seu expediente.'}
+                ? 'As pendências foram movidas para amanhã.'
+                : 'Veja suas entregas e mova o que ficou para amanhã.'}
             </p>
           </div>
         </div>
@@ -85,33 +82,24 @@ export function WindDownModal({
         {/* 3 Summary Metrics */}
         <div className="grid grid-cols-3 gap-3">
           <div className="p-3 rounded-2xl bg-surface-2/80 border border-primary-border/50 text-center">
-            <div className="w-7 h-7 rounded-xl bg-primary-soft text-primary flex items-center justify-center mx-auto mb-1.5">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
             <p className="text-lg font-extrabold text-text">{completedToday.length}</p>
-            <span className="text-[10px] font-semibold text-text-3 uppercase tracking-wider">
+            <span className="text-[11px] font-medium text-text-3">
               Concluídas
             </span>
           </div>
 
           <div className="p-3 rounded-2xl bg-surface-2/80 border border-primary-border/50 text-center">
-            <div className="w-7 h-7 rounded-xl bg-primary-soft text-primary flex items-center justify-center mx-auto mb-1.5">
-              <Clock className="w-4 h-4" />
-            </div>
             <p className="text-lg font-extrabold text-primary">
               {(workedTodayMinutes / 60).toFixed(1)}h
             </p>
-            <span className="text-[10px] font-semibold text-text-3 uppercase tracking-wider">
-              Tempo Focado
+            <span className="text-[11px] font-medium text-text-3">
+              Tempo focado
             </span>
           </div>
 
           <div className="p-3 rounded-2xl bg-surface-2/80 border border-primary-border/50 text-center">
-            <div className="w-7 h-7 rounded-xl bg-primary-soft text-primary flex items-center justify-center mx-auto mb-1.5">
-              <Target className="w-4 h-4" />
-            </div>
             <p className="text-lg font-extrabold text-text">{precisionRate}%</p>
-            <span className="text-[10px] font-semibold text-text-3 uppercase tracking-wider">
+            <span className="text-[11px] font-medium text-text-3">
               Precisão
             </span>
           </div>
@@ -177,11 +165,11 @@ export function WindDownModal({
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 text-emerald-800 dark:text-emerald-200"
+            className="p-4 rounded-2xl bg-primary-soft border border-primary/25 flex items-center gap-3 text-text"
           >
-            <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
             <p className="text-xs font-semibold">
-              Nenhuma pendência restante para hoje! Sua rotina está 100% em dia.
+              Nenhuma tarefa pendente para hoje.
             </p>
           </motion.div>
         )}

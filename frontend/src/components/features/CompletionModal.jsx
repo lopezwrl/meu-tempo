@@ -5,10 +5,10 @@ import { useTimer } from '../../hooks/useTimer';
 import { Smile, Zap, Coffee, Clock } from 'lucide-react';
 
 const MOODS = [
-  { id: 'produtivo', label: 'Produtivo', icon: Zap, color: 'text-amber-500' },
-  { id: 'leve', label: 'Leve', icon: Smile, color: 'text-pink-500' },
-  { id: 'arrastado', label: 'Arrastado', icon: Coffee, color: 'text-blue-500' },
-  { id: 'pesado', label: 'Pesado', icon: Clock, color: 'text-rose-500' },
+  { id: 'produtivo', label: 'Produtivo', icon: Zap },
+  { id: 'leve', label: 'Leve', icon: Smile },
+  { id: 'arrastado', label: 'Arrastado', icon: Coffee },
+  { id: 'pesado', label: 'Pesado', icon: Clock },
 ];
 
 const DELAY_REASONS = [
@@ -63,19 +63,19 @@ export function CompletionModal() {
         {estimated > 0 && (
           <div className="p-3.5 rounded-2xl bg-surface-2 border border-primary-border/60 flex items-center justify-around text-center">
             <div>
-              <span className="text-[11px] text-text-3 font-medium uppercase tracking-wider">
+              <span className="text-[11px] text-text-3 font-medium">
                 Estimado
               </span>
               <p className="text-lg font-bold text-text mt-0.5">{estimated} min</p>
             </div>
             <div className="h-8 w-px bg-primary-border/40" />
             <div>
-              <span className="text-[11px] text-text-3 font-medium uppercase tracking-wider">
+              <span className="text-[11px] text-text-3 font-medium">
                 Tempo Real
               </span>
               <p
                 className={`text-lg font-bold mt-0.5 ${
-                  isOverdue ? 'text-amber-500' : 'text-primary'
+                  isOverdue ? 'text-text-2' : 'text-primary'
                 }`}
               >
                 {currentMinutes} min
@@ -104,7 +104,7 @@ export function CompletionModal() {
                       : 'bg-surface border-primary-border/50 text-text-3 hover:border-primary/40'
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${m.color}`} />
+                  <Icon className={`w-5 h-5 ${isSelected ? 'text-primary' : 'text-text-3'}`} />
                   <span>{m.label}</span>
                 </button>
               );

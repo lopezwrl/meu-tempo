@@ -27,7 +27,6 @@ import {
   Plus,
   ArrowRight,
   AlertTriangle,
-  Sparkles,
   Moon,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -218,9 +217,9 @@ export function Home() {
 
           <div className="space-y-3">
             {filteredTodayTasks.length === 0 ? (
-              <div className="p-8 rounded-2xl bg-surface border border-primary-border/60 text-center">
+              <div className="p-8 rounded-2xl bg-surface border border-primary-border/70 text-center">
                 <div className="w-10 h-10 rounded-2xl bg-primary-soft text-primary flex items-center justify-center mx-auto mb-3">
-                  <Sparkles className="w-5 h-5" />
+                  <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <h4 className="text-sm font-semibold text-text">
                   {selectedEnergyFilter
@@ -229,8 +228,8 @@ export function Home() {
                 </h4>
                 <p className="text-xs text-text-3 mt-1">
                   {selectedEnergyFilter
-                    ? 'Experimente alternar o filtro de energia ou criar uma nova tarefa.'
-                    : 'Que tal planejar algo produtivo ou relaxar?'}
+                    ? 'Troque o filtro de energia acima ou adicione uma nova tarefa.'
+                    : 'Adicione suas primeiras tarefas para organizar o dia.'}
                 </p>
                 <button
                   type="button"
@@ -272,7 +271,7 @@ export function Home() {
         {/* Right Column: Weekly Chart & Recent Notes */}
         <section className="lg:col-span-5 space-y-6">
           {/* Weekly Hours Recharts Card */}
-          <div className="p-5 rounded-2xl bg-surface border border-primary-border/60 shadow-sm backdrop-blur-sm">
+          <div className="p-5 rounded-2xl bg-surface border border-primary-border/70 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-sm font-bold text-text">Horas da semana</h3>

@@ -111,7 +111,7 @@ export function NoteEditor({
   return (
     <div className="h-full flex flex-col bg-surface rounded-3xl border border-primary-border/60 shadow-sm overflow-hidden">
       {/* Top action toolbar */}
-      <div className="px-6 py-3 border-b border-primary-border/40 flex flex-wrap items-center justify-between gap-3 bg-surface/80 backdrop-blur-sm">
+      <div className="px-6 py-3 border-b border-primary-border/40 flex flex-wrap items-center justify-between gap-3 bg-surface">
         {/* Notebook selection & save indicator */}
         <div className="flex items-center gap-3">
           <select
@@ -310,7 +310,7 @@ export function NoteEditor({
         {/* Markdown preview split view */}
         {showSplitView && (
           <div className="hidden md:block w-1/2 pl-4 overflow-y-auto">
-            <div className="text-[11px] font-semibold text-text-3 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <div className="text-xs font-semibold text-text-3 mb-2 flex items-center gap-1.5">
               <Eye className="w-3.5 h-3.5" />
               <span>Preview</span>
             </div>

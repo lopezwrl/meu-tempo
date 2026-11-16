@@ -11,7 +11,6 @@ import {
   Wind,
   Moon,
   FastForward,
-  Activity,
 } from 'lucide-react';
 
 export function WellbeingHub({
@@ -70,21 +69,19 @@ export function WellbeingHub({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="lg:col-span-7 p-5 rounded-3xl bg-surface border border-primary-border/70 shadow-sm backdrop-blur-sm flex flex-col justify-between gap-4"
+        className="lg:col-span-7 p-5 rounded-3xl bg-surface border border-primary-border/70 shadow-sm flex flex-col justify-between gap-4"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shrink-0 border border-primary/20">
-              <BatteryCharging className="w-5 h-5" />
-            </div>
+            <BatteryCharging className="w-5 h-5 text-primary shrink-0" />
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-sm font-extrabold text-text tracking-tight">
-                  Ritmo Circadiano: {circadian.phase}
+                <h3 className="text-sm font-bold text-text tracking-tight">
+                  {circadian.phase}
                 </h3>
                 <EnergyBadge level={circadian.recommendedEnergy} size="sm" />
               </div>
-              <p className="text-xs text-text-3 mt-1 leading-relaxed">
+              <p className="text-xs text-text-3 mt-0.5">
                 {circadian.summary}
               </p>
             </div>
@@ -93,10 +90,10 @@ export function WellbeingHub({
 
         {/* Energy Filter Pills & Quick Sanctuary Triggers */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-primary-border/40">
-          {onSelectEnergyFilter ? (
+          {onSelectEnergyFilter && (
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[11px] font-semibold text-text-3 mr-1">
-                Filtrar por energia:
+              <span className="text-[11px] font-medium text-text-3 mr-1">
+                Energia:
               </span>
               {[
                 { id: null, label: 'Todas' },
@@ -114,18 +111,13 @@ export function WellbeingHub({
                   }
                   className={`px-2.5 py-1 rounded-xl text-[11px] font-semibold border transition-all ${
                     selectedEnergyFilter === tier.id
-                      ? 'bg-primary text-white border-primary shadow-sm shadow-[#D63B6A]/20'
+                      ? 'bg-primary text-white border-primary'
                       : 'bg-surface-2/70 text-text-2 border-primary-border/50 hover:border-primary/40'
                   }`}
                 >
                   {tier.label}
                 </button>
               ))}
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-primary">
-              <Activity className="w-3.5 h-3.5" />
-              <span>Sintonia biológica ativa</span>
             </div>
           )}
 
@@ -135,13 +127,13 @@ export function WellbeingHub({
               onClick={() => onOpenSanctuary?.('sound')}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
                 soundState.isPlaying
-                  ? 'bg-primary text-white border-primary shadow-sm shadow-[#D63B6A]/20'
+                  ? 'bg-primary text-white border-primary'
                   : 'bg-surface-2 text-text-2 border-primary-border/60 hover:text-primary hover:border-primary/40'
               }`}
               title="Abrir Santuário de Paisagens Sonoras Offline"
             >
               <Volume2 className="w-3.5 h-3.5" />
-              <span>{soundState.isPlaying ? 'Som Ativo' : 'Santuário Sonoro'}</span>
+              <span>{soundState.isPlaying ? 'Som ligado' : 'Sons de foco'}</span>
             </button>
 
             <button
@@ -162,44 +154,43 @@ export function WellbeingHub({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.06 }}
-        className="lg:col-span-5 p-5 rounded-3xl bg-surface border border-primary-border/70 shadow-sm backdrop-blur-sm flex flex-col justify-between gap-4"
+        className="lg:col-span-5 p-5 rounded-3xl bg-surface border border-primary-border/70 shadow-sm flex flex-col justify-between gap-4"
       >
         <div>
           <div className="flex items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2">
               {isOverloaded ? (
-                <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />
+                <ShieldAlert className="w-4 h-4 text-primary shrink-0" />
               ) : (
-                <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
+                <ShieldCheck className="w-4 h-4 text-text-2 shrink-0" />
               )}
-              <h3 className="text-sm font-extrabold text-text tracking-tight">
-                Medidor Anti-Burnout
+              <h3 className="text-sm font-bold text-text tracking-tight">
+                Equilíbrio de Carga
               </h3>
             </div>
 
             <span
-              className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+              className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
                 isOverloaded
-                  ? 'bg-rose-500/10 text-rose-600 dark:text-rose-300 border-rose-500/30'
+                  ? 'bg-primary text-white border-primary'
                   : isModerate
-                  ? 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30'
-                  : 'bg-primary-soft text-primary border-primary/25'
+                  ? 'bg-primary-soft text-primary border-primary/25'
+                  : 'bg-surface-2 text-text-2 border-primary-border/50'
               }`}
             >
               {isOverloaded
-                ? 'Sobrecarga Detectada'
+                ? 'Acima do limite'
                 : isModerate
-                ? 'Ritmo Intenso'
-                : 'Carga Saudável'}
+                ? 'Dia cheio'
+                : 'Equilibrado'}
             </span>
           </div>
 
           <p className="text-xs text-text-3 mb-3">
-            Planejado hoje:{' '}
             <strong className="text-text">{(plannedMinutes / 60).toFixed(1)}h</strong>{' '}
-            de{' '}
+            planejadas de{' '}
             <strong className="text-text">{(safeCapacity / 60).toFixed(1)}h</strong>{' '}
-            de capacidade saudável ({loadRatio}%)
+            disponíveis ({loadRatio}%)
           </p>
 
           {/* Animated Load Bar */}
@@ -210,8 +201,8 @@ export function WellbeingHub({
               transition={{ duration: 0.6, ease: 'easeOut' }}
               className={`h-full rounded-full ${
                 isOverloaded
-                  ? 'bg-gradient-to-r from-amber-500 to-rose-500'
-                  : 'bg-gradient-to-r from-[#F0A0B5] via-[#E85280] to-[#D63B6A]'
+                  ? 'bg-primary'
+                  : 'bg-gradient-to-r from-[#F0A0B5] to-[#D63B6A]'
               }`}
             />
           </div>
@@ -223,16 +214,16 @@ export function WellbeingHub({
               type="button"
               onClick={handleRebalanceDay}
               disabled={isRebalancing}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 shadow-sm transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-light shadow-sm transition-all disabled:opacity-50"
             >
               <FastForward className="w-3.5 h-3.5" />
               <span>
-                {isRebalancing ? 'Reequilibrando...' : 'Reequilibrar Dia (1-Clique)'}
+                {isRebalancing ? 'Reequilibrando...' : 'Reequilibrar Dia'}
               </span>
             </button>
           ) : (
             <span className="text-[11px] text-text-3 font-medium">
-              Seu ritmo respeita seus limites hoje.
+              Dentro da capacidade do dia
             </span>
           )}
 
@@ -240,10 +231,10 @@ export function WellbeingHub({
             <button
               type="button"
               onClick={onOpenWindDown}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary-soft text-primary border border-primary/25 hover:bg-primary hover:text-white text-xs font-bold transition-all ml-auto shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-2 text-text-2 border border-primary-border/60 hover:text-primary hover:border-primary/40 text-xs font-semibold transition-all ml-auto shrink-0"
               title="Abrir Ritual de Fechamento do Dia"
             >
-              <Moon className="w-3.5 h-3.5" />
+              <Moon className="w-3.5 h-3.5 text-primary" />
               <span>Fechar Dia</span>
             </button>
           )}

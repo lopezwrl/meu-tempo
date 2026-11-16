@@ -7,7 +7,7 @@ import {
   PhoneCall,
   HeartPulse,
   Wallet,
-  Sparkles,
+  Star,
   Tag,
   CheckCircle2,
   Clock,
@@ -41,7 +41,7 @@ const CATEGORY_ICON_MAP = {
   financas: Wallet,
   finanças: Wallet,
   folder: Folder,
-  sparkles: Sparkles,
+  sparkles: Star,
 };
 
 /**
@@ -85,28 +85,28 @@ export const ENERGY_LEVELS = [
     id: 'alta',
     label: 'Foco Profundo',
     shortLabel: 'Energia Alta',
-    description: 'Exige máxima concentração e criatividade',
+    description: 'Exige máxima concentração',
     icon: Zap,
     badgeClass:
-      'bg-rose-500/10 text-[#D63B6A] border-[#D63B6A]/30 dark:bg-rose-500/15 dark:text-[#F9C6D0]',
+      'bg-primary-soft text-primary border-primary/25',
   },
   {
     id: 'media',
     label: 'Fluxo Normal',
     shortLabel: 'Energia Média',
-    description: 'Execução constante e colaborativa',
+    description: 'Execução constante',
     icon: Activity,
     badgeClass:
-      'bg-amber-500/10 text-amber-700 border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300',
+      'bg-surface-2 text-text-2 border-primary-border/60',
   },
   {
     id: 'baixa',
     label: 'Modo Leve',
     shortLabel: 'Energia Leve',
-    description: 'Tarefas mecânicas, organização e revisão rápida',
+    description: 'Tarefas rápidas e revisão',
     icon: Feather,
     badgeClass:
-      'bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300',
+      'bg-surface-2/70 text-text-3 border-primary-border/40',
   },
 ];
 

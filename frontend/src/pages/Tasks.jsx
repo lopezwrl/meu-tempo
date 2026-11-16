@@ -14,14 +14,6 @@ import {
   BatteryCharging,
 } from 'lucide-react';
 
-const MOTIVATIONAL_QUOTES = [
-  'Um passo de cada vez constrói grandes jornadas.',
-  'Foco no processo, clareza na execução.',
-  'Celebre cada entrega concluída no seu dia.',
-  'Seu tempo é seu ativo mais valioso. Cuide bem dele.',
-  'Respire fundo e comece pelo que realmente importa.',
-];
-
 export function Tasks() {
   const [statusFilter, setStatusFilter] = useState('pendentes'); // 'todas' | 'pendentes' | 'concluidas'
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -97,10 +89,6 @@ export function Tasks() {
     setSelectedTaskNote(newNote);
   };
 
-  // Pick motivational quote based on date
-  const quoteIndex = new Date().getDate() % MOTIVATIONAL_QUOTES.length;
-  const currentQuote = MOTIVATIONAL_QUOTES[quoteIndex];
-
   return (
     <div className="space-y-6 pb-16">
       {/* Page Header */}
@@ -110,7 +98,7 @@ export function Tasks() {
             Tarefas
           </h1>
           <p className="text-xs text-text-3 mt-0.5">
-            Organize suas entregas com foco, clareza e respeito ao seu ritmo
+            Suas entregas organizadas por status, categoria e energia
           </p>
         </div>
 
@@ -221,7 +209,7 @@ export function Tasks() {
 
         {/* Horizontal scrollable category & project filter chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none overscroll-x-contain">
-          <span className="text-[11px] font-semibold text-text-3 uppercase tracking-wider shrink-0 flex items-center gap-1">
+          <span className="text-xs font-medium text-text-3 shrink-0 flex items-center gap-1">
             <Filter className="w-3 h-3" />
             <span>Filtros:</span>
           </span>
@@ -302,10 +290,10 @@ export function Tasks() {
             <h3 className="text-base font-bold text-text">
               {statusFilter === 'concluidas'
                 ? 'Nenhuma tarefa concluída neste filtro'
-                : 'Tudo limpo por aqui!'}
+                : 'Nenhuma tarefa encontrada'}
             </h3>
-            <p className="text-xs text-text-3 mt-1.5 max-w-sm italic">
-              "{currentQuote}"
+            <p className="text-xs text-text-3 mt-1.5 max-w-sm">
+              Ajuste os filtros acima ou crie uma nova tarefa para começar.
             </p>
 
             <button
@@ -314,7 +302,7 @@ export function Tasks() {
                 setTaskToEdit(null);
                 setIsTaskModalOpen(true);
               }}
-              className="mt-6 px-4 py-2.5 rounded-2xl bg-primary text-white text-xs font-semibold hover:bg-primary-light transition-all shadow-md shadow-pink-500/20"
+              className="mt-6 px-4 py-2.5 rounded-2xl bg-primary text-white text-xs font-semibold hover:bg-primary-light transition-all shadow-sm"
             >
               Criar nova tarefa
             </button>

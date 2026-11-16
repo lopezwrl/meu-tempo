@@ -5,7 +5,7 @@ import { Input, Textarea } from '../ui/Input';
 import { api } from '../../services/api';
 import { useEnergyStore } from '../../stores/energyStore';
 import { ENERGY_LEVELS } from '../ui/CategoryIcon';
-import { Sparkles } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 export function TaskModal({
   isOpen,
@@ -123,9 +123,9 @@ export function TaskModal({
         />
 
         {suggestion && (
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-pink-50 dark:bg-pink-950/40 border border-primary/20 text-xs text-text-2">
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-primary-soft border border-primary/20 text-xs text-text-2">
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <Clock className="w-3.5 h-3.5 text-primary" />
               <span>
                 Sugestão baseada em tarefas similares:{' '}
                 <strong>{suggestion.suggested_minutes} minutos</strong>

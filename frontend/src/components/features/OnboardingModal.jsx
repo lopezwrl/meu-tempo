@@ -5,7 +5,6 @@ import { useUserStore } from '../../stores/userStore';
 import { api } from '../../services/api';
 import { soundEffects } from '../../utils/audio';
 import {
-  Sparkles,
   User,
   Clock,
   BookOpen,
@@ -83,44 +82,37 @@ export function OnboardingModal({ isOpen, onClose }) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 15 }}
           transition={{ type: 'spring', damping: 25, stiffness: 320 }}
-          className="relative z-10 w-full max-w-lg bg-surface border border-primary-border/80 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden"
+          className="relative z-10 w-full max-w-lg bg-surface border border-primary-border/80 rounded-3xl p-6 sm:p-8 shadow-xl overflow-hidden"
         >
-          {/* Ambient Corner Aura */}
-          <div className="absolute -top-16 -right-16 w-44 h-44 rounded-full bg-gradient-to-tr from-[#D63B6A]/30 to-[#F9C6D0]/40 blur-2xl pointer-events-none" />
-
           {/* Header */}
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-[#D63B6A]/25 shrink-0">
-              <Sparkles className="w-6 h-6 animate-pulse" />
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-11 h-11 rounded-2xl bg-primary-soft text-primary flex items-center justify-center border border-primary/20 shrink-0">
+              <User className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-primary uppercase tracking-widest">
-                Primeiro Acesso
-              </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-text tracking-tight">
-                Boas-vindas ao Meu Tempo
+              <h2 className="text-xl font-bold text-text tracking-tight">
+                Configurar seu perfil
               </h2>
+              <p className="text-xs text-text-3 mt-0.5">
+                Ajuste como o Meu Tempo se adapta ao seu dia
+              </p>
             </div>
           </div>
-
-          <p className="text-xs sm:text-sm text-text-3 mb-6 leading-relaxed">
-            Seu novo refúgio para foco, organização de rotina e clareza mental. Como podemos te chamar para personalizar sua experiência?
-          </p>
 
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleFinish(false);
             }}
-            className="space-y-4"
+            className="space-y-4 mt-4"
           >
             {/* Campo 1: Nome */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-text-2">
-                Seu nome ou apelido
+                Como prefere ser chamado?
               </label>
               <div className="relative flex items-center">
-                <User className="w-4 h-4 text-primary absolute left-3.5 pointer-events-none" />
+                <User className="w-4 h-4 text-text-3 absolute left-3.5 pointer-events-none" />
                 <input
                   type="text"
                   value={name}
@@ -140,7 +132,7 @@ export function OnboardingModal({ isOpen, onClose }) {
                   className="flex items-center gap-1.5 text-xs text-primary font-semibold pt-0.5"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Olá, {name.trim()}! Seu dia será planejado com leveza.</span>
+                  <span>Tudo pronto, {name.trim()}.</span>
                 </motion.div>
               )}
             </div>
@@ -148,15 +140,15 @@ export function OnboardingModal({ isOpen, onClose }) {
             {/* Campo 2: Jornada de Trabalho (Início e Fim) */}
             <div className="space-y-1.5 pt-1">
               <label className="block text-xs font-bold text-text-2 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-primary" />
-                <span>Horário aproximado do seu dia de trabalho</span>
+                <Clock className="w-3.5 h-3.5 text-text-3" />
+                <span>Horário de trabalho</span>
               </label>
               <p className="text-[11px] text-text-3">
-                Usado pelo Medidor Anti-Burnout e Ritmo Circadiano para proteger seu tempo.
+                Usado para calcular a capacidade diária no equilíbrio de carga.
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <span className="text-[10px] text-text-3 font-semibold uppercase">Início</span>
+                  <span className="text-[11px] text-text-3 font-medium">Início</span>
                   <input
                     type="time"
                     value={workdayStart}
@@ -165,7 +157,7 @@ export function OnboardingModal({ isOpen, onClose }) {
                   />
                 </div>
                 <div>
-                  <span className="text-[10px] text-text-3 font-semibold uppercase">Término</span>
+                  <span className="text-[11px] text-text-3 font-medium">Término</span>
                   <input
                     type="time"
                     value={workdayEnd}
@@ -179,8 +171,8 @@ export function OnboardingModal({ isOpen, onClose }) {
             {/* Campo 3: Primeiro Caderno */}
             <div className="space-y-1.5 pt-1">
               <label className="block text-xs font-bold text-text-2 flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5 text-primary" />
-                <span>Nome do seu primeiro caderno de notas</span>
+                <BookOpen className="w-3.5 h-3.5 text-text-3" />
+                <span>Primeiro caderno de notas</span>
               </label>
               <input
                 type="text"
@@ -206,7 +198,7 @@ export function OnboardingModal({ isOpen, onClose }) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-primary text-white text-xs font-bold shadow-lg shadow-[#D63B6A]/25 hover:bg-primary-light active:scale-95 transition-all"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-primary text-white text-xs font-bold shadow-sm hover:bg-primary-light active:scale-95 transition-all"
               >
                 <span>{isSubmitting ? 'Salvando...' : 'Começar a usar'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -218,3 +210,4 @@ export function OnboardingModal({ isOpen, onClose }) {
     </AnimatePresence>
   );
 }
+

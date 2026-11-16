@@ -18,29 +18,29 @@ import {
 const SOUNDSCAPES = [
   {
     id: 'rain',
-    name: 'Chuva Suave na Janela',
-    subtitle: 'Modulação orgânica que mascara ruídos externos sem cansar a audição',
+    name: 'Chuva Suave',
+    subtitle: 'Chuva filtrada contínua para abafar ruídos',
     icon: CloudRain,
   },
   {
     id: 'pink',
-    name: 'Ruído Rosa Profundo (1/f)',
-    subtitle: 'Frequência acústica equilibrada para leitura, escrita e programação',
+    name: 'Ruído Rosa (1/f)',
+    subtitle: 'Frequência estável para leitura e foco',
     icon: Waves,
   },
   {
     id: 'zen',
-    name: 'Harmônicos Serenos',
-    subtitle: 'Acordes senoidais contínuos de baixa frequência para foco sem ansiedade',
+    name: 'Acordes Serenos',
+    subtitle: 'Tons contínuos de baixa frequência',
     icon: Radio,
   },
 ];
 
 const BREATH_PHASES = [
-  { label: 'Inspire profundamente', instruction: 'Pelo nariz, expandindo o abdômen', scale: 1.38, freq: 432 },
-  { label: 'Segure o ar', instruction: 'Mantenha a presença e a calma', scale: 1.38, freq: 528 },
-  { label: 'Expire lentamente', instruction: 'Solte toda a tensão acumulada', scale: 0.85, freq: 396 },
-  { label: 'Pausa serena', instruction: 'Pulmões em repouso absoluto', scale: 0.85, freq: 360 },
+  { label: 'Inspire', instruction: 'Pelo nariz durante 4 segundos', scale: 1.38, freq: 432 },
+  { label: 'Segure', instruction: 'Mantenha o ar por 4 segundos', scale: 1.38, freq: 528 },
+  { label: 'Expire', instruction: 'Solte devagar por 4 segundos', scale: 0.85, freq: 396 },
+  { label: 'Pausa', instruction: 'Aguarde 4 segundos antes de reiniciar', scale: 0.85, freq: 360 },
 ];
 
 export function FocusSanctuaryModal({
@@ -199,8 +199,8 @@ export function FocusSanctuaryModal({
                         <div className="flex items-center gap-2">
                           <h4 className="text-xs font-bold text-text truncate">{item.name}</h4>
                           {isSelected && (
-                            <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold">
-                              Ativo
+                            <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[10px] font-semibold">
+                              Tocando
                             </span>
                           )}
                         </div>
@@ -349,17 +349,17 @@ export function FocusSanctuaryModal({
                 <span className="text-3xl font-extrabold font-mono text-primary">
                   {isBreathing ? `${secondsLeft}s` : '4-4-4-4'}
                 </span>
-                <span className="text-[11px] font-bold text-text mt-1 uppercase tracking-wider">
+                <span className="text-xs font-bold text-text mt-1">
                   {isBreathing ? currentBreath.label : 'Box Breathing'}
                 </span>
               </div>
             </div>
 
             <div className="text-center space-y-1">
-              <p className="text-xs font-semibold text-text-2">
+              <p className="text-xs font-medium text-text-2">
                 {isBreathing
                   ? currentBreath.instruction
-                  : 'Técnica de 4 tempos usada para reduzir o cortisol e restaurar a clareza mental.'}
+                  : 'Ciclo guiado de 4 segundos por etapa.'}
               </p>
               {cyclesCompleted > 0 && (
                 <p className="inline-flex items-center gap-1 text-[11px] font-bold text-primary">

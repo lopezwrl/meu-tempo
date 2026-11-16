@@ -28,7 +28,7 @@ export const Card = React.forwardRef(function Card(
     <Component
       ref={ref}
       onClick={onClick}
-      className={`bg-surface rounded-2xl border border-primary-border/60 p-5 shadow-[0_2px_12px_rgba(236,72,153,0.04)] backdrop-blur-sm ${
+      className={`bg-surface rounded-2xl border border-primary-border/70 p-5 shadow-sm ${
         interactive ? 'cursor-pointer' : ''
       } ${className}`}
       {...motionProps}

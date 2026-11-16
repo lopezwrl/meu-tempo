@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { audio } from '../../utils/audio';
-import { Sparkles, ArrowRight, Heart, Zap, Compass, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Heart, Zap, Compass, CheckCircle2 } from 'lucide-react';
 
 const SUBTITLES = [
-  { Icon: Heart, text: 'Planejamento com leveza e clareza' },
-  { Icon: Zap, text: 'Foco profundo sem ansiedade' },
-  { Icon: Compass, text: 'Seu ritmo biológico respeitado' },
-  { Icon: CheckCircle2, text: 'Tudo pronto para o seu melhor dia' },
+  { Icon: Heart, text: 'Planejamento leve para o seu dia' },
+  { Icon: Zap, text: 'Foco contínuo, no seu tempo' },
+  { Icon: Compass, text: 'Tarefas, notas e ritmo real' },
+  { Icon: CheckCircle2, text: 'Tudo organizado em um só lugar' },
 ];
 
 export function SplashScreen({ onComplete, forceShow = false }) {
@@ -158,10 +158,8 @@ export function SplashScreen({ onComplete, forceShow = false }) {
               initial={{ scale: 0.65, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-              className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-[40px] bg-white/90 dark:bg-[#200B16]/90 shadow-[0_25px_60px_-10px_rgba(214,59,106,0.32)] p-3 border border-white/60 dark:border-white/10 backdrop-blur-2xl"
+              className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-[40px] bg-surface shadow-lg p-3 border border-primary-border/60"
             >
-              {/* Inner Glowing Border Gradient */}
-              <div className="absolute inset-0 rounded-[40px] bg-gradient-to-tr from-[#D63B6A]/20 via-transparent to-[#F9C6D0]/40 pointer-events-none" />
 
               {/* Vector Favicon Artwork */}
               <svg
@@ -280,11 +278,6 @@ export function SplashScreen({ onComplete, forceShow = false }) {
                   style={{ transformOrigin: '224px 368px' }}
                 />
               </svg>
-
-              {/* Shimmer Light Accent */}
-              <div className="absolute top-2 right-2 w-8 h-8 rounded-2xl bg-white/40 dark:bg-white/10 backdrop-blur-md border border-white/60 dark:border-white/20 flex items-center justify-center text-primary shadow-sm pointer-events-none">
-                <Sparkles className="w-4 h-4 fill-primary/30" />
-              </div>
             </motion.div>
 
             {/* Typography & Brand Identity */}
@@ -294,11 +287,7 @@ export function SplashScreen({ onComplete, forceShow = false }) {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="mt-6 flex flex-col items-center text-center px-4"
             >
-              <span className="text-[10px] font-extrabold tracking-[0.25em] uppercase text-primary/80 mb-1">
-                ORGANIZAÇÃO & BEM-ESTAR
-              </span>
-
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-[#D63B6A] via-[#E85280] to-[#F07297] bg-clip-text text-transparent drop-shadow-sm">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text">
                 Meu Tempo
               </h1>
 
@@ -311,7 +300,7 @@ export function SplashScreen({ onComplete, forceShow = false }) {
                     animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
                     exit={{ opacity: 0, y: -6, filter: 'blur(4px)', scale: 1.04 }}
                     transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-                    className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-[#200B16]/80 border border-primary/20 text-text text-xs font-semibold shadow-sm backdrop-blur-md"
+                    className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface border border-primary-border/70 text-text-2 text-xs font-semibold shadow-sm"
                   >
                     <CurrentSubtitleIcon className="w-3.5 h-3.5 text-primary shrink-0" />
                     <span>{SUBTITLES[subtitleIndex].text}</span>
@@ -332,9 +321,8 @@ export function SplashScreen({ onComplete, forceShow = false }) {
               transition={{ delay: 1.1, duration: 0.5 }}
               whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.97 }}
-              className="mt-8 flex items-center gap-2.5 px-6 py-3 rounded-full bg-primary text-white text-xs font-bold shadow-xl shadow-[#D63B6A]/30 hover:shadow-2xl hover:shadow-[#D63B6A]/45 hover:bg-primary-light transition-all group border border-white/20"
+              className="mt-8 flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white text-xs font-bold shadow-md hover:bg-primary-light transition-all group"
             >
-              <Sparkles className="w-4 h-4 animate-pulse" />
               <span>Entrar no Meu Tempo</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </motion.button>

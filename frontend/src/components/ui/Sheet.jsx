@@ -46,7 +46,7 @@ export function Sheet({
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0.9 }}
             transition={{ type: 'spring', damping: 28, stiffness: 350 }}
-            className={`relative z-10 w-full ${maxWidth} bg-surface border border-primary-border/60 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col`}
+            className={`relative z-10 w-full ${maxWidth} bg-surface border border-primary-border/70 rounded-t-3xl sm:rounded-3xl shadow-xl overflow-hidden max-h-[92vh] flex flex-col`}
           >
             {/* Grab handle for touch users */}
             <div className="flex sm:hidden justify-center pt-3 pb-1">

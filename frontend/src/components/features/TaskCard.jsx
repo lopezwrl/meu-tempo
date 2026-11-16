@@ -41,11 +41,10 @@ function firePinkConfetti(event) {
   });
 }
 
-const PRIORITY_COLORS = {
-  alta: 'border-l-[#D63B6A]',
-  media: 'border-l-amber-500',
-  baixa: 'border-l-sky-400',
-  nenhuma: 'border-l-primary-border',
+const PRIORITY_LABELS = {
+  alta: { label: 'Alta', dotClass: 'bg-primary' },
+  media: { label: 'Média', dotClass: 'bg-text-3/60' },
+  baixa: { label: 'Baixa', dotClass: 'bg-text-3/30' },
 };
 
 export function TaskCard({
@@ -98,7 +97,7 @@ export function TaskCard({
     delta: 50,
   });
 
-  const priorityBorder = PRIORITY_COLORS[task.priority] || PRIORITY_COLORS.media;
+  const priorityInfo = PRIORITY_LABELS[task.priority] || PRIORITY_LABELS.media;
 
   return (
     <motion.div
@@ -107,7 +106,7 @@ export function TaskCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: delay * 0.04, ease: 'easeOut' }}
       whileHover={{ y: -2, transition: { duration: 0.15 } }}
-      className={`group relative bg-surface border border-primary-border/60 border-l-4 ${priorityBorder} rounded-2xl p-4 shadow-sm backdrop-blur-sm transition-all ${
+      className={`group relative bg-surface border border-primary-border/70 rounded-2xl p-4 shadow-sm transition-all ${
         isCompletedState ? 'opacity-70 scale-[0.98]' : ''
       }`}
     >
@@ -167,6 +166,15 @@ export function TaskCard({
 
           {/* Metadata badges & chips */}
           <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+            {/* Priority indicator */}
+            <span
+              className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-2/80 text-text-2 border border-primary-border/40"
+              title={`Prioridade ${priorityInfo.label}`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${priorityInfo.dotClass}`} />
+              <span>{priorityInfo.label}</span>
+            </span>
+
             {/* Circadian Energy Badge */}
             <EnergyBadge level={taskEnergy} size="sm" />
 
